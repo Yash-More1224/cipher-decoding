@@ -473,9 +473,9 @@ def main():
     parser.add_argument("--seed",       type=int,   default=42)
 
     # Model
-    parser.add_argument("--d_model",      type=int,   default=512)
+    parser.add_argument("--d_model",      type=int,   default=256)
     parser.add_argument("--n_heads",      type=int,   default=8)
-    parser.add_argument("--d_ff",         type=int,   default=2048)
+    parser.add_argument("--d_ff",         type=int,   default=1024)
     parser.add_argument("--num_layers",   type=int,   default=6)
     parser.add_argument("--max_seq_len",  type=int,   default=1366,
                         help="Used for C1–C4 only.")
@@ -554,8 +554,20 @@ def main():
         print(f"[Model] Config={args.config} | Parameters={n_params:,}")
 
     # ── Optimizer & Loss ──────────────────────────────────────────────────
-    optimizer = optim.Adam(model.parameters(), lr=args.lr, betas=(0.9, 0.98), eps=1e-9)
-    criterion = nn.CrossEntropyLoss(ignore_index=train_ds.pad_id_plain)
+    optimizer = optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.98), eps=1e-9, weight_decay=0.01)
+    
+    # Calculate total training steps for the scheduler
+    steps_per_epoch = len(train_loader)
+    total_steps = args.epochs * steps_per_epoch
+    
+    # Cosine Annealing reduces the learning rate from max (args.lr) down to 0 over total_steps
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=total_steps)
+    
+    # Label smoothing prevents the model from becoming overconfident (helps generalization)
+    criterion = nn.CrossEntropyLoss(ignore_index=train_ds.pad_id_plain, label_smoothing=0.1)
+    
+    # Automatic Mixed Precision (AMP) scaler for fp16 training
+    scaler = torch.amp.GradScaler("cuda")
 
     # ── Training Loop ─────────────────────────────────────────────────────
     global_step = 0
@@ -571,13 +583,25 @@ def main():
             src, tgt = src.to(device), tgt.to(device)
 
             optimizer.zero_grad()
-            logits = forward_pass(model, src, tgt, train_ds, is_blt)
-
-            targets = tgt[:, 1:].contiguous().view(-1)
-            loss    = criterion(logits.contiguous().view(-1, logits.size(-1)), targets)
-            loss.backward()
+            
+            # Forward pass with Automatic Mixed Precision (fp16)
+            with torch.autocast(device_type="cuda", dtype=torch.float16):
+                logits = forward_pass(model, src, tgt, train_ds, is_blt)
+                targets = tgt[:, 1:].contiguous().view(-1)
+                loss    = criterion(logits.contiguous().view(-1, logits.size(-1)), targets)
+            
+            # Backward pass with scaled gradients
+            scaler.scale(loss).backward()
+            
+            # Unscale before clipping so max_norm=1.0 is accurate
+            scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            optimizer.step()
+            
+            # Step optimizer and update scaler
+            scaler.step(optimizer)
+            scaler.update()
+            
+            scheduler.step()
 
             epoch_loss  += loss.item()
             global_step += 1
@@ -586,38 +610,21 @@ def main():
                 print(f"Epoch {epoch} | Step {step} | Loss {loss.item():.4f}")
                 wandb.log({"train/loss": loss.item(), "epoch": epoch, "step": global_step})
 
-        # ── Validation ────────────────────────────────────────────────────
-        val_metrics = evaluate(
-            model, val_loader, train_ds, device, is_blt,
-            max_decode_batches=10,
-        )
-
+        # ── Validation (Removed) ──────────────────────────────────────────
+        
         if is_main():
             epoch_time = time.time() - t0
             avg_train_loss = epoch_loss / len(train_loader)
             print(
                 f"Epoch {epoch} done | "
                 f"train_loss={avg_train_loss:.4f} | "
-                f"val_loss={val_metrics['val_loss']:.4f} | "
-                f"bit_acc={val_metrics['bit_accuracy']:.4f} | "
-                f"seq_acc={val_metrics['seq_accuracy']:.4f} | "
-                f"lev={val_metrics['levenshtein']:.2f} | "
                 f"time={epoch_time:.1f}s"
             )
-            log_dict = {
-                "epoch":            epoch,
-                "train/avg_loss":   avg_train_loss,
-                "val/loss":         val_metrics["val_loss"],
-                "val/bit_accuracy": val_metrics["bit_accuracy"],
-                "val/seq_accuracy": val_metrics["seq_accuracy"],
-                "val/levenshtein":  val_metrics["levenshtein"],
-            }
-            if not is_blt:
-                log_dict["val/bleu"]   = val_metrics.get("bleu",   0.0)
-                log_dict["val/rouge1"] = val_metrics.get("rouge1", 0.0)
-                log_dict["val/rouge2"] = val_metrics.get("rouge2", 0.0)
-                log_dict["val/rougeL"] = val_metrics.get("rougeL", 0.0)
-            wandb.log(log_dict)
+            
+            wandb.log({
+                "epoch":          epoch,
+                "train/avg_loss": avg_train_loss,
+            })
 
             # Save checkpoint
             ckpt_path = f"outputs/checkpoint_{args.config}_epoch{epoch:02d}.pt"
@@ -628,7 +635,7 @@ def main():
                     "config":     args.config,
                     "state_dict": raw_model.state_dict(),
                     "optimizer":  optimizer.state_dict(),
-                    "val_loss":   val_metrics["val_loss"],
+                    # removed val_loss from checkpoint dict
                 },
                 ckpt_path,
             )
