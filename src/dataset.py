@@ -1,135 +1,311 @@
+"""
+dataset.py — Dataset loaders for Assignment 1.
+
+Two dataset classes:
+  EncryptedDataset   — BPE-tokenized loader for configs C1–C4.
+  TokenFreeDataset   — Raw-byte loader for config C5 (BLT).
+
+Both classes expose a `split()` class-method that returns
+(train_dataset, val_dataset, test_dataset) with an 80 / 10 / 10 split.
+The split is deterministic (seeded shuffle) so results are reproducible.
+
+TokenFreeDataset encoding notes
+────────────────────────────────
+Plaintext  (e.g., "Hello world")
+  → UTF-8 bytes, each byte value b is shifted to b+3 to reserve
+    IDs 0, 1, 2 for PAD, BOS, EOS.
+
+Ciphertext (e.g., "01001000...")
+  → Each '0'/'1' character is treated as a raw byte (ASCII 48 / 49),
+    then shifted by +3 → IDs 51 / 52.
+  This is the true token-free approach: 2-symbol byte stream.
+  max_src_len defaults to 6402 (6400 bits + BOS/EOS) to avoid truncation.
+  max_tgt_len defaults to  802 (≤800 UTF-8 bytes + BOS/EOS).
+"""
+
 import os
+import random
+
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, Subset
 from tokenizers import Tokenizer
 
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _split_indices(n: int, seed: int = 42):
+    """
+    Returns (train_idx, val_idx, test_idx) for an 80/10/10 split.
+    The indices are shuffled deterministically using `seed`.
+    """
+    indices = list(range(n))
+    rng = random.Random(seed)
+    rng.shuffle(indices)
+
+    n_train = int(0.8 * n)
+    n_val   = int(0.1 * n)
+    # test gets the remainder so rounding never drops samples
+    train_idx = indices[:n_train]
+    val_idx   = indices[n_train : n_train + n_val]
+    test_idx  = indices[n_train + n_val :]
+    return train_idx, val_idx, test_idx
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# BPE-Tokenized Dataset  (C1 – C4)
+# ──────────────────────────────────────────────────────────────────────────────
+
 class EncryptedDataset(Dataset):
-    def __init__(self, plain_file, cipher_file, max_seq_len=1366, subset_size=None):
-        # Robust relative paths: Resolve relative to this file's location
-        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        plain_path = os.path.join(base_dir, 'Dataset_A1', plain_file)
-        cipher_path = os.path.join(base_dir, 'Dataset_A1', cipher_file)
-        
-        plain_tok_path = os.path.join(base_dir, 'h-params', 'tokenizers', 'plain_tokenizer.json')
-        cipher_tok_path = os.path.join(base_dir, 'h-params', 'tokenizers', 'cipher_tokenizer.json')
-        
+    """
+    Loads brown_plain.txt + brown_cipher.txt, tokenizes each line with
+    pre-trained BPE tokenizers, and pads to max_seq_len.
+
+    Returns (cipher_tensor, plain_tensor) pairs where:
+      cipher_tensor : (max_seq_len,)  — encoder input
+      plain_tensor  : (max_seq_len,)  — decoder input/target (with BOS/EOS)
+    """
+
+    def __init__(
+        self,
+        plain_file: str = "brown_plain.txt",
+        cipher_file: str = "brown_cipher.txt",
+        max_seq_len: int = 1366,
+        _lines: tuple | None = None,   # internal use by _from_lines()
+    ):
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        plain_tok_path  = os.path.join(base_dir, "h-params", "tokenizers", "plain_tokenizer.json")
+        cipher_tok_path = os.path.join(base_dir, "h-params", "tokenizers", "cipher_tokenizer.json")
+
         if not os.path.exists(plain_tok_path) or not os.path.exists(cipher_tok_path):
-            raise FileNotFoundError("Tokenizers not found. Please run h-params/1_max_seq_len.py first.")
-            
-        self.plain_tokenizer = Tokenizer.from_file(plain_tok_path)
+            raise FileNotFoundError(
+                "Tokenizers not found. Please run h-params/1_max_seq_len.py first."
+            )
+
+        self.plain_tokenizer  = Tokenizer.from_file(plain_tok_path)
         self.cipher_tokenizer = Tokenizer.from_file(cipher_tok_path)
-        
         self.max_seq_len = max_seq_len
-        
-        with open(plain_path, 'r', encoding='utf-8') as f:
-            self.plain_lines = f.readlines()
-            
-        with open(cipher_path, 'r', encoding='utf-8') as f:
-            self.cipher_lines = f.readlines()
-            
-        if subset_size is not None:
-            self.plain_lines = self.plain_lines[:subset_size]
-            self.cipher_lines = self.cipher_lines[:subset_size]
-            
-        assert len(self.plain_lines) == len(self.cipher_lines), "Mismatched line counts!"
-        
-        self.plain_vocab_size = self.plain_tokenizer.get_vocab_size()
+
+        if _lines is not None:
+            self.plain_lines, self.cipher_lines = _lines
+        else:
+            plain_path  = os.path.join(base_dir, "Dataset_A1", plain_file)
+            cipher_path = os.path.join(base_dir, "Dataset_A1", cipher_file)
+            with open(plain_path,  "r", encoding="utf-8") as f:
+                self.plain_lines = f.readlines()
+            with open(cipher_path, "r", encoding="utf-8") as f:
+                self.cipher_lines = f.readlines()
+
+        assert len(self.plain_lines) == len(self.cipher_lines), \
+            "Mismatched line counts between plaintext and ciphertext files."
+
+        self.plain_vocab_size  = self.plain_tokenizer.get_vocab_size()
         self.cipher_vocab_size = self.cipher_tokenizer.get_vocab_size()
-        
-        self.bos_id_plain = self.plain_tokenizer.token_to_id("[BOS]")
-        self.eos_id_plain = self.plain_tokenizer.token_to_id("[EOS]")
-        self.pad_id_plain = self.plain_tokenizer.token_to_id("[PAD]")
-        
+
+        self.bos_id_plain  = self.plain_tokenizer.token_to_id("[BOS]")
+        self.eos_id_plain  = self.plain_tokenizer.token_to_id("[EOS]")
+        self.pad_id_plain  = self.plain_tokenizer.token_to_id("[PAD]")
         self.bos_id_cipher = self.cipher_tokenizer.token_to_id("[BOS]")
         self.eos_id_cipher = self.cipher_tokenizer.token_to_id("[EOS]")
         self.pad_id_cipher = self.cipher_tokenizer.token_to_id("[PAD]")
 
-    def __len__(self):
+    # ------------------------------------------------------------------
+    # 80 / 10 / 10 split  (class-method)
+    # ------------------------------------------------------------------
+
+    @classmethod
+    def split(
+        cls,
+        plain_file: str = "brown_plain.txt",
+        cipher_file: str = "brown_cipher.txt",
+        max_seq_len: int = 1366,
+        seed: int = 42,
+    ):
+        """
+        Returns (train_ds, val_ds, test_ds) — each is an EncryptedDataset
+        sharing the same tokenizers but holding only its partition's lines.
+        """
+        # Load all lines once
+        base_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..")
+        )
+        with open(os.path.join(base_dir, "Dataset_A1", plain_file),  "r", encoding="utf-8") as f:
+            all_plain  = f.readlines()
+        with open(os.path.join(base_dir, "Dataset_A1", cipher_file), "r", encoding="utf-8") as f:
+            all_cipher = f.readlines()
+
+        assert len(all_plain) == len(all_cipher)
+        train_idx, val_idx, test_idx = _split_indices(len(all_plain), seed)
+
+        def _make(idx):
+            plain_subset  = [all_plain[i]  for i in idx]
+            cipher_subset = [all_cipher[i] for i in idx]
+            return cls(max_seq_len=max_seq_len, _lines=(plain_subset, cipher_subset))
+
+        return _make(train_idx), _make(val_idx), _make(test_idx)
+
+    # ------------------------------------------------------------------
+    # Dataset protocol
+    # ------------------------------------------------------------------
+
+    def __len__(self) -> int:
         return len(self.plain_lines)
 
-    def _pad_sequence(self, token_ids, bos_id, eos_id, pad_id):
-        # Truncate if too long (leaving room for BOS/EOS)
-        token_ids = token_ids[:self.max_seq_len - 2]
-        
-        # Add BOS and EOS
-        sequence = [bos_id] + token_ids + [eos_id]
-        
-        # Pad up to max_seq_len
-        padding_length = self.max_seq_len - len(sequence)
-        sequence = sequence + [pad_id] * padding_length
-        
+    def _pad_sequence(
+        self,
+        token_ids: list,
+        bos_id: int,
+        eos_id: int,
+        pad_id: int,
+    ) -> torch.Tensor:
+        token_ids = token_ids[: self.max_seq_len - 2]          # truncate
+        sequence  = [bos_id] + token_ids + [eos_id]
+        sequence += [pad_id] * (self.max_seq_len - len(sequence))
         return torch.tensor(sequence, dtype=torch.long)
 
-    def __getitem__(self, idx):
-        plain_line = self.plain_lines[idx].strip()
+    def __getitem__(self, idx: int):
+        plain_line  = self.plain_lines[idx].strip()
         cipher_line = self.cipher_lines[idx].strip()
-        
-        # Tokenize
-        plain_encoded = self.plain_tokenizer.encode(plain_line).ids
-        cipher_encoded = self.cipher_tokenizer.encode(cipher_line).ids
-        
-        # Pad & add special tokens
-        plain_tensor = self._pad_sequence(plain_encoded, self.bos_id_plain, self.eos_id_plain, self.pad_id_plain)
-        cipher_tensor = self._pad_sequence(cipher_encoded, self.bos_id_cipher, self.eos_id_cipher, self.pad_id_cipher)
-        
+
+        plain_ids  = self.plain_tokenizer.encode(plain_line).ids
+        cipher_ids = self.cipher_tokenizer.encode(cipher_line).ids
+
+        plain_tensor  = self._pad_sequence(plain_ids,  self.bos_id_plain,  self.eos_id_plain,  self.pad_id_plain)
+        cipher_tensor = self._pad_sequence(cipher_ids, self.bos_id_cipher, self.eos_id_cipher, self.pad_id_cipher)
+
         return cipher_tensor, plain_tensor
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Token-Free Dataset  (C5 — BLT)
+# ──────────────────────────────────────────────────────────────────────────────
+
 class TokenFreeDataset(Dataset):
     """
-    Dataset for Byte Latent Transformer (C5).
-    Feeds raw bytes instead of tokens.
+    Raw-byte loader for the Byte Latent Transformer (C5).
+
+    Encoding:
+      Special tokens:  PAD=0, BOS=1, EOS=2
+      Plaintext bytes: UTF-8 byte value b → ID (b + 3)
+      Ciphertext bytes: each '0'/'1' ASCII character → ord('0'/'1') + 3 = 51 / 52
+                        (no tokenization — pure byte stream)
+
+    Vocabulary size: 259  (256 raw bytes + 3 special tokens)
+
+    Sequence lengths:
+      Ciphertext: each line is ~6400 '0'/'1' characters → max_src_len = 6402
+      Plaintext:  each line is ≤800 UTF-8 characters    → max_tgt_len = 802
     """
-    def __init__(self, plain_file, cipher_file, max_seq_len=2048, subset_size=None):
-        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        plain_path = os.path.join(base_dir, 'Dataset_A1', plain_file)
-        cipher_path = os.path.join(base_dir, 'Dataset_A1', cipher_file)
-        
-        self.max_seq_len = max_seq_len
-        
-        with open(plain_path, 'r', encoding='utf-8') as f:
-            self.plain_lines = f.readlines()
-            
-        with open(cipher_path, 'r', encoding='utf-8') as f:
-            self.cipher_lines = f.readlines()
-            
-        if subset_size is not None:
-            self.plain_lines = self.plain_lines[:subset_size]
-            self.cipher_lines = self.cipher_lines[:subset_size]
-            
-        assert len(self.plain_lines) == len(self.cipher_lines), "Mismatched line counts!"
-        
-        # 0: PAD, 1: BOS, 2: EOS, 3-258: Bytes
-        self.pad_id_plain = 0
-        self.bos_id_plain = 1
-        self.eos_id_plain = 2
-        
-        self.plain_vocab_size = 259
-        self.cipher_vocab_size = 259
 
-    def __len__(self):
-        return len(self.plain_lines)
+    # Special token IDs
+    PAD_ID = 0
+    BOS_ID = 1
+    EOS_ID = 2
+    VOCAB_SIZE = 259   # 256 byte values + 3 special tokens
 
-    def _encode_bytes(self, text):
-        # Convert text to UTF-8 bytes and shift by 3
-        byte_array = text.encode('utf-8')
-        return [b + 3 for b in byte_array]
+    def __init__(
+        self,
+        plain_file: str = "brown_plain.txt",
+        cipher_file: str = "brown_cipher.txt",
+        max_src_len: int = 6402,   # cipher: ~6400 bits/chars + BOS/EOS
+        max_tgt_len: int = 802,    # plain:  ≤800 UTF-8 bytes  + BOS/EOS
+        _lines: tuple | None = None,
+    ):
+        self.max_src_len = max_src_len
+        self.max_tgt_len = max_tgt_len
 
-    def _pad_sequence(self, token_ids, bos_id, eos_id, pad_id):
-        token_ids = token_ids[:self.max_seq_len - 2]
-        sequence = [bos_id] + token_ids + [eos_id]
-        padding_length = self.max_seq_len - len(sequence)
-        sequence = sequence + [pad_id] * padding_length
+        # Expose these so train.py can reference them uniformly
+        self.pad_id_plain  = self.PAD_ID
+        self.pad_id_cipher = self.PAD_ID
+        self.plain_vocab_size  = self.VOCAB_SIZE
+        self.cipher_vocab_size = self.VOCAB_SIZE
+
+        if _lines is not None:
+            self.plain_lines, self.cipher_lines = _lines
+        else:
+            base_dir = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..")
+            )
+            with open(os.path.join(base_dir, "Dataset_A1", plain_file),  "r", encoding="utf-8") as f:
+                self.plain_lines = f.readlines()
+            with open(os.path.join(base_dir, "Dataset_A1", cipher_file), "r", encoding="utf-8") as f:
+                self.cipher_lines = f.readlines()
+
+        assert len(self.plain_lines) == len(self.cipher_lines)
+
+    # ------------------------------------------------------------------
+    # 80 / 10 / 10 split  (class-method)
+    # ------------------------------------------------------------------
+
+    @classmethod
+    def split(
+        cls,
+        plain_file: str = "brown_plain.txt",
+        cipher_file: str = "brown_cipher.txt",
+        max_src_len: int = 6402,
+        max_tgt_len: int = 802,
+        seed: int = 42,
+    ):
+        """Returns (train_ds, val_ds, test_ds)."""
+        base_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..")
+        )
+        with open(os.path.join(base_dir, "Dataset_A1", plain_file),  "r", encoding="utf-8") as f:
+            all_plain  = f.readlines()
+        with open(os.path.join(base_dir, "Dataset_A1", cipher_file), "r", encoding="utf-8") as f:
+            all_cipher = f.readlines()
+
+        assert len(all_plain) == len(all_cipher)
+        train_idx, val_idx, test_idx = _split_indices(len(all_plain), seed)
+
+        def _make(idx):
+            return cls(
+                max_src_len=max_src_len,
+                max_tgt_len=max_tgt_len,
+                _lines=([all_plain[i] for i in idx], [all_cipher[i] for i in idx]),
+            )
+
+        return _make(train_idx), _make(val_idx), _make(test_idx)
+
+    # ------------------------------------------------------------------
+    # Encoding helpers
+    # ------------------------------------------------------------------
+
+    def _encode_plain(self, text: str) -> list[int]:
+        """Encode plaintext as UTF-8 bytes, shifted by +3."""
+        return [b + 3 for b in text.encode("utf-8")]
+
+    def _encode_cipher(self, text: str) -> list[int]:
+        """
+        Encode ciphertext ('0'/'1' characters) as raw ASCII bytes shifted by +3.
+        '0' → ord('0') + 3 = 51
+        '1' → ord('1') + 3 = 52
+        This preserves the 2-symbol byte stream without any tokenization.
+        """
+        return [ord(c) + 3 for c in text]
+
+    def _pad(self, ids: list[int], max_len: int) -> torch.Tensor:
+        ids = ids[: max_len - 2]                              # truncate
+        sequence = [self.BOS_ID] + ids + [self.EOS_ID]
+        sequence += [self.PAD_ID] * (max_len - len(sequence))
         return torch.tensor(sequence, dtype=torch.long)
 
-    def __getitem__(self, idx):
-        plain_line = self.plain_lines[idx].strip()
+    # ------------------------------------------------------------------
+    # Dataset protocol
+    # ------------------------------------------------------------------
+
+    def __len__(self) -> int:
+        return len(self.plain_lines)
+
+    def __getitem__(self, idx: int):
+        plain_line  = self.plain_lines[idx].strip()
         cipher_line = self.cipher_lines[idx].strip()
-        
-        plain_encoded = self._encode_bytes(plain_line)
-        cipher_encoded = self._encode_bytes(cipher_line)
-        
-        plain_tensor = self._pad_sequence(plain_encoded, self.bos_id_plain, self.eos_id_plain, self.pad_id_plain)
-        cipher_tensor = self._pad_sequence(cipher_encoded, self.bos_id_plain, self.eos_id_plain, self.pad_id_plain)
-        
+
+        plain_ids  = self._encode_plain(plain_line)
+        cipher_ids = self._encode_cipher(cipher_line)
+
+        plain_tensor  = self._pad(plain_ids,  self.max_tgt_len)
+        cipher_tensor = self._pad(cipher_ids, self.max_src_len)
+
         return cipher_tensor, plain_tensor

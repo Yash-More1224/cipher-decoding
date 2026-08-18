@@ -1,298 +1,671 @@
+"""
+train.py — Main training script for Assignment 1.
+
+Usage (single GPU):
+    python -m src.train --config C1 --epochs 10
+
+Usage (4-GPU DDP via torchrun):
+    torchrun --nproc_per_node=4 -m src.train --config C1 --epochs 10
+
+Configuration → model mapping:
+    C1  Base:           Sinusoidal | MHA | LayerNorm | BPE
+    C2  Positional:     RoPE       | MHA | LayerNorm | BPE
+    C3  Attention:      Sinusoidal | GQA | LayerNorm | BPE
+    C4  Normalization:  Sinusoidal | MHA | RMSNorm   | BPE
+    C5  BLT:            Sinusoidal | MHA | LayerNorm | Token-Free (raw bytes)
+
+Model classes defined here (to avoid an extra transformer.py file):
+    PositionwiseFeedForward  — position-wise FFN
+    EncoderBlock             — pre-LN encoder block (MHA/GQA + LayerNorm/RMSNorm)
+    DecoderBlock             — pre-LN decoder block with cross-attention
+    Transformer              — full encoder-decoder model for C1–C4
+"""
+
 import os
 import argparse
+import time
+import math
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, DistributedSampler
-import wandb
-from huggingface_hub import HfApi
 
-# Import components
+import wandb
+from huggingface_hub import HfApi, upload_folder
+
+# Project imports
 from src.dataset import EncryptedDataset, TokenFreeDataset
 from src.models.attention import MultiHeadAttention, GroupedQueryAttention
 from src.models.norm import LayerNorm, RMSNorm
 from src.models.positional import SinusoidalPositionalEncoding, get_rotary_matrix
-from src.utils import greedy_decode, bit_level_accuracy, sequence_accuracy, calculate_levenshtein, calculate_bleu, calculate_rouge
 from src.models.blt import BLTTransformer
+from src.utils import (
+    greedy_decode,
+    bit_level_accuracy,
+    sequence_accuracy,
+    calculate_levenshtein,
+    calculate_bleu,
+    calculate_rouge,
+)
 
-# -----------------------------------------------------------------------
-# Core Transformer Assembly (C1, C2, C3, C4)
-# -----------------------------------------------------------------------
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Transformer Building Blocks  (C1 – C4)
+# ──────────────────────────────────────────────────────────────────────────────
+
 class PositionwiseFeedForward(nn.Module):
-    def __init__(self, d_model, d_ff, dropout=0.1):
+    """Position-wise Feed-Forward Network: FFN(x) = W2 · ReLU(W1 · x)."""
+
+    def __init__(self, d_model: int, d_ff: int, dropout: float = 0.1):
         super().__init__()
         self.w_1 = nn.Linear(d_model, d_ff)
         self.w_2 = nn.Linear(d_ff, d_model)
         self.dropout = nn.Dropout(dropout)
-        
-    def forward(self, x):
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.w_2(self.dropout(torch.relu(self.w_1(x))))
 
+
 class EncoderBlock(nn.Module):
-    def __init__(self, d_model, n_heads, d_ff, dropout=0.1, attention_type='mha', norm_type='layernorm'):
+    """
+    Single Transformer Encoder block with Pre-LayerNorm residuals.
+    Supports MHA or GQA attention, and LayerNorm or RMSNorm.
+    """
+
+    def __init__(
+        self,
+        d_model: int,
+        n_heads: int,
+        d_ff: int,
+        dropout: float = 0.1,
+        attention_type: str = "mha",
+        norm_type: str = "layernorm",
+        n_kv_heads: int | None = None,
+    ):
         super().__init__()
-        if attention_type == 'mha':
+        if attention_type == "mha":
             self.self_attn = MultiHeadAttention(d_model, n_heads, dropout)
-        elif attention_type == 'gqa':
-            # C3 configuration: say 8 query heads, 2 kv heads
-            self.self_attn = GroupedQueryAttention(d_model, n_heads, max(1, n_heads // 4), dropout)
-            
+        elif attention_type == "gqa":
+            kv_heads = n_kv_heads if n_kv_heads is not None else max(1, n_heads // 4)
+            self.self_attn = GroupedQueryAttention(d_model, n_heads, kv_heads, dropout)
+        else:
+            raise ValueError(f"Unknown attention_type: {attention_type}")
+
         self.feed_forward = PositionwiseFeedForward(d_model, d_ff, dropout)
-        
-        NormClass = LayerNorm if norm_type == 'layernorm' else RMSNorm
+        NormClass = LayerNorm if norm_type == "layernorm" else RMSNorm
         self.norm1 = NormClass(d_model)
         self.norm2 = NormClass(d_model)
         self.dropout = nn.Dropout(dropout)
-        
-    def forward(self, x, mask=None, sin=None, cos=None):
-        # Pre-LayerNorm configuration
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        mask: torch.Tensor | None = None,
+        sin: torch.Tensor | None = None,
+        cos: torch.Tensor | None = None,
+    ) -> torch.Tensor:
         x_norm = self.norm1(x)
         attn_out = self.self_attn(x_norm, x_norm, x_norm, mask=mask, sin=sin, cos=cos)
         x = x + self.dropout(attn_out)
-        
-        ff_out = self.feed_forward(self.norm2(x))
-        x = x + self.dropout(ff_out)
+        x = x + self.dropout(self.feed_forward(self.norm2(x)))
         return x
 
+
 class DecoderBlock(nn.Module):
-    def __init__(self, d_model, n_heads, d_ff, dropout=0.1, attention_type='mha', norm_type='layernorm'):
+    """
+    Single Transformer Decoder block with Pre-LayerNorm residuals.
+    RoPE (sin/cos) is applied only to self-attention, not cross-attention.
+    """
+
+    def __init__(
+        self,
+        d_model: int,
+        n_heads: int,
+        d_ff: int,
+        dropout: float = 0.1,
+        attention_type: str = "mha",
+        norm_type: str = "layernorm",
+        n_kv_heads: int | None = None,
+    ):
         super().__init__()
-        if attention_type == 'mha':
-            self.self_attn = MultiHeadAttention(d_model, n_heads, dropout)
+        kv_heads = n_kv_heads if n_kv_heads is not None else max(1, n_heads // 4)
+        if attention_type == "mha":
+            self.self_attn  = MultiHeadAttention(d_model, n_heads, dropout)
             self.cross_attn = MultiHeadAttention(d_model, n_heads, dropout)
-        elif attention_type == 'gqa':
-            self.self_attn = GroupedQueryAttention(d_model, n_heads, max(1, n_heads // 4), dropout)
-            self.cross_attn = GroupedQueryAttention(d_model, n_heads, max(1, n_heads // 4), dropout)
-            
+        elif attention_type == "gqa":
+            self.self_attn  = GroupedQueryAttention(d_model, n_heads, kv_heads, dropout)
+            self.cross_attn = GroupedQueryAttention(d_model, n_heads, kv_heads, dropout)
+        else:
+            raise ValueError(f"Unknown attention_type: {attention_type}")
+
         self.feed_forward = PositionwiseFeedForward(d_model, d_ff, dropout)
-        
-        NormClass = LayerNorm if norm_type == 'layernorm' else RMSNorm
+        NormClass = LayerNorm if norm_type == "layernorm" else RMSNorm
         self.norm1 = NormClass(d_model)
         self.norm2 = NormClass(d_model)
         self.norm3 = NormClass(d_model)
         self.dropout = nn.Dropout(dropout)
-        
-    def forward(self, x, enc_output, src_mask=None, tgt_mask=None, sin=None, cos=None):
-        # Self Attention (masked)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        enc_output: torch.Tensor,
+        src_mask: torch.Tensor | None = None,
+        tgt_mask: torch.Tensor | None = None,
+        sin: torch.Tensor | None = None,
+        cos: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        # Masked self-attention (with RoPE if provided)
         x_norm = self.norm1(x)
         attn_out = self.self_attn(x_norm, x_norm, x_norm, mask=tgt_mask, sin=sin, cos=cos)
         x = x + self.dropout(attn_out)
-        
-        # Cross Attention (no RoPE for cross-attention usually, but we pass sin/cos if configured, though standard is self-attn only)
-        # Note: We only apply RoPE to cross-attention if we want to, but standard RoPE is for self-attention.
-        # We will not apply RoPE to cross-attention to strictly follow standard.
-        attn_out = self.cross_attn(self.norm2(x), enc_output, enc_output, mask=src_mask)
+        # Cross-attention (no RoPE — standard practice)
+        x_norm = self.norm2(x)
+        attn_out = self.cross_attn(x_norm, enc_output, enc_output, mask=src_mask)
         x = x + self.dropout(attn_out)
-        
-        # Feed Forward
-        ff_out = self.feed_forward(self.norm3(x))
-        x = x + self.dropout(ff_out)
+        # Feed-forward
+        x = x + self.dropout(self.feed_forward(self.norm3(x)))
         return x
+
 
 class Transformer(nn.Module):
     """
-    Generalized Transformer to support C1, C2, C3, C4.
+    Encoder-Decoder Transformer supporting configs C1–C4.
+
+    Config → component mapping
+    --------------------------
+    C1 (Base):           Sinusoidal | MHA | LayerNorm
+    C2 (Positional):     RoPE       | MHA | LayerNorm
+    C3 (Attention):      Sinusoidal | GQA | LayerNorm   (n_kv_heads = n_heads // 4)
+    C4 (Normalization):  Sinusoidal | MHA | RMSNorm
     """
-    def __init__(self, vocab_size_plain, vocab_size_cipher, d_model=512, n_heads=8, d_ff=2048, 
-                 num_layers=6, max_seq_len=1366, dropout=0.1, config='C1'):
+
+    def __init__(
+        self,
+        vocab_size_plain: int,
+        vocab_size_cipher: int,
+        d_model: int = 512,
+        n_heads: int = 8,
+        d_ff: int = 2048,
+        num_layers: int = 6,
+        max_seq_len: int = 1366,
+        dropout: float = 0.1,
+        config: str = "C1",
+        n_kv_heads: int | None = None,
+    ):
         super().__init__()
         self.config = config
         self.d_model = d_model
-        
+        self.n_heads = n_heads
+
+        attention_type = "gqa" if config == "C3" else "mha"
+        norm_type      = "rmsnorm" if config == "C4" else "layernorm"
+        self.pos_enc_type = "rope" if config == "C2" else "sinusoidal"
+        kv_heads = n_kv_heads if n_kv_heads is not None else max(1, n_heads // 4)
+
         self.src_emb = nn.Embedding(vocab_size_cipher, d_model)
-        self.tgt_emb = nn.Embedding(vocab_size_plain, d_model)
-        
-        attention_type = 'gqa' if config == 'C3' else 'mha'
-        norm_type = 'rmsnorm' if config == 'C4' else 'layernorm'
-        self.pos_enc_type = 'rope' if config == 'C2' else 'sinusoidal'
-        
-        if self.pos_enc_type == 'sinusoidal':
+        self.tgt_emb = nn.Embedding(vocab_size_plain,  d_model)
+
+        if self.pos_enc_type == "sinusoidal":
             self.pos_enc = SinusoidalPositionalEncoding(d_model, max_len=max_seq_len)
-            
+
         self.encoder_blocks = nn.ModuleList([
-            EncoderBlock(d_model, n_heads, d_ff, dropout, attention_type, norm_type) for _ in range(num_layers)
+            EncoderBlock(d_model, n_heads, d_ff, dropout, attention_type, norm_type, kv_heads)
+            for _ in range(num_layers)
         ])
         self.decoder_blocks = nn.ModuleList([
-            DecoderBlock(d_model, n_heads, d_ff, dropout, attention_type, norm_type) for _ in range(num_layers)
+            DecoderBlock(d_model, n_heads, d_ff, dropout, attention_type, norm_type, kv_heads)
+            for _ in range(num_layers)
         ])
-        
-        NormClass = LayerNorm if norm_type == 'layernorm' else RMSNorm
+
+        NormClass = LayerNorm if norm_type == "layernorm" else RMSNorm
         self.final_norm = NormClass(d_model)
-        self.fc_out = nn.Linear(d_model, vocab_size_plain)
+        self.fc_out  = nn.Linear(d_model, vocab_size_plain)
         self.dropout = nn.Dropout(dropout)
-        
-    def generate_mask(self, src, tgt, pad_idx_src, pad_idx_tgt):
+
+    def _make_masks(self, src, tgt, pad_idx_src, pad_idx_tgt):
         src_mask = (src == pad_idx_src).unsqueeze(1).unsqueeze(2)
-        tgt_len = tgt.size(1)
+        tgt_len  = tgt.size(1)
         tgt_pad_mask = (tgt == pad_idx_tgt).unsqueeze(1).unsqueeze(2)
-        tgt_sub_mask = torch.tril(torch.ones((tgt_len, tgt_len), device=tgt.device)).bool()
-        tgt_sub_mask = ~tgt_sub_mask.unsqueeze(0).unsqueeze(1)
-        tgt_mask = tgt_pad_mask | tgt_sub_mask
-        return src_mask, tgt_mask
-        
+        tgt_sub_mask = ~torch.tril(
+            torch.ones((tgt_len, tgt_len), device=tgt.device, dtype=torch.bool)
+        ).unsqueeze(0).unsqueeze(1)
+        return src_mask, tgt_pad_mask | tgt_sub_mask
+
+    def _get_rope(self, src_len, tgt_len, device):
+        d_k = self.d_model // self.n_heads
+        sin, cos = get_rotary_matrix(max(src_len, tgt_len), d_k, device)
+        return sin, cos
+
     def forward(self, src, tgt, pad_idx_src, pad_idx_tgt):
-        src_mask, tgt_mask = self.generate_mask(src, tgt, pad_idx_src, pad_idx_tgt)
-        
+        src_mask, tgt_mask = self._make_masks(src, tgt, pad_idx_src, pad_idx_tgt)
+
         enc_out = self.src_emb(src)
         dec_out = self.tgt_emb(tgt)
-        
+
         sin, cos = None, None
-        if self.pos_enc_type == 'sinusoidal':
+        if self.pos_enc_type == "sinusoidal":
             enc_out = self.pos_enc(enc_out)
             dec_out = self.pos_enc(dec_out)
-        else: # RoPE
-            # For RoPE, we generate sin and cos for the sequence lengths
-            seq_len = src.size(1)
-            # Assuming n_heads = 8 for RoPE dimension
-            d_k = self.d_model // 8 
-            sin, cos = get_rotary_matrix(max(src.size(1), tgt.size(1)), d_k, src.device)
-            
+        else:
+            sin, cos = self._get_rope(src.size(1), tgt.size(1), src.device)
+
         enc_out = self.dropout(enc_out)
         for block in self.encoder_blocks:
-            enc_out = block(enc_out, mask=src_mask, sin=sin[:src.size(1)] if sin is not None else None, cos=cos[:src.size(1)] if cos is not None else None)
-        enc_out = self.final_norm(enc_out) 
-            
+            enc_out = block(enc_out, mask=src_mask,
+                            sin=sin[:src.size(1)] if sin is not None else None,
+                            cos=cos[:src.size(1)] if cos is not None else None)
+        enc_out = self.final_norm(enc_out)
+
         dec_out = self.dropout(dec_out)
         for block in self.decoder_blocks:
-            dec_out = block(dec_out, enc_out, src_mask, tgt_mask, sin=sin[:tgt.size(1)] if sin is not None else None, cos=cos[:tgt.size(1)] if cos is not None else None)
-            
+            dec_out = block(dec_out, enc_out, src_mask=src_mask, tgt_mask=tgt_mask,
+                            sin=sin[:tgt.size(1)] if sin is not None else None,
+                            cos=cos[:tgt.size(1)] if cos is not None else None)
+
         dec_out = self.final_norm(dec_out)
-        out = self.fc_out(dec_out)
-        return out
+        return self.fc_out(dec_out)
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Distributed helpers
+# ──────────────────────────────────────────────────────────────────────────────
 
-# -----------------------------------------------------------------------
-# Training Utilities
-# -----------------------------------------------------------------------
-def setup_ddp():
-    os.environ["NCCL_P2P_DISABLE"] = "1"
-    if "WORLD_SIZE" in os.environ:
+def setup_ddp() -> int:
+    """Initialise NCCL process group if running under torchrun.  Returns local_rank."""
+    os.environ.setdefault("NCCL_P2P_DISABLE", "1")
+    if "WORLD_SIZE" in os.environ and int(os.environ["WORLD_SIZE"]) > 1:
         local_rank = int(os.environ["LOCAL_RANK"])
         torch.cuda.set_device(local_rank)
         dist.init_process_group("nccl")
         return local_rank
     return 0
 
+
 def cleanup_ddp():
     if dist.is_initialized():
         dist.destroy_process_group()
 
-def evaluate(model, val_loader, dataset, device, local_rank):
-    model.eval()
-    total_loss = 0
-    criterion = nn.CrossEntropyLoss(ignore_index=dataset.pad_id_plain)
-    
-    with torch.no_grad():
-        for src, tgt in val_loader:
-            src = src.to(device)
-            tgt = tgt.to(device)
-            
-            if hasattr(model, 'module'):
-                output = model.module(src, tgt[:, :-1], dataset.pad_id_cipher, dataset.pad_id_plain)
-            else:
-                output = model(src, tgt[:, :-1], dataset.pad_id_cipher, dataset.pad_id_plain)
-                
-            output = output.contiguous().view(-1, output.size(-1))
-            targets = tgt[:, 1:].contiguous().view(-1)
-            loss = criterion(output, targets)
-            total_loss += loss.item()
-            
-    # Compute metrics using greedy decode on a small subset
-    # TODO: generate outputs and calculate BLEU, ROUGE, Levenshtein, Bit/Seq accuracy
-    return total_loss / len(val_loader)
 
-def main():
-    parser = argparse.ArgumentParser(description="Train Transformer Variants")
-    parser.add_argument("--config", type=str, default="C1", choices=["C1", "C2", "C3", "C4", "C5"])
-    parser.add_argument("--epochs", type=int, default=10)
-    parser.add_argument("--batch_size", type=int, default=2)
-    parser.add_argument("--d_model", type=int, default=512)
-    parser.add_argument("--push_to_hub", action="store_true")
-    parser.add_argument("--hf_token", type=str, default="")
-    args = parser.parse_args()
+def is_main() -> bool:
+    """True on the rank-0 / single-GPU process."""
+    return not dist.is_initialized() or dist.get_rank() == 0
 
-    local_rank = setup_ddp()
-    device = torch.device(f"cuda:{local_rank}")
-    
-    if local_rank == 0:
-        wandb.init(project="anlp-assignment-1", name=f"run-{args.config}", config=args)
 
-    # 1. Dataset
-    is_blt = args.config == "C5"
-    if is_blt:
-        dataset = TokenFreeDataset('brown_plain.txt', 'brown_cipher.txt', max_seq_len=2048)
-    else:
-        dataset = EncryptedDataset('brown_plain.txt', 'brown_cipher.txt', max_seq_len=1366)
-        
-    sampler = DistributedSampler(dataset) if dist.is_initialized() else None
-    dataloader = DataLoader(dataset, batch_size=args.batch_size, sampler=sampler, shuffle=(sampler is None))
+# ──────────────────────────────────────────────────────────────────────────────
+# Model factory
+# ──────────────────────────────────────────────────────────────────────────────
 
-    # 2. Model
-    if is_blt:
-        model = BLTTransformer(
-            vocab_size_plain=dataset.plain_vocab_size,
+def build_model(args, dataset) -> nn.Module:
+    """Instantiate the correct model for the chosen config."""
+    if args.config == "C5":
+        return BLTTransformer(
+            vocab_size=dataset.plain_vocab_size,
             d_model=args.d_model,
-            patch_size=4
-        ).to(device)
+            n_heads=args.n_heads,
+            d_ff=args.d_ff,
+            num_layers=args.num_layers,
+            n_local_layers=args.n_local_layers,
+            patch_size=args.patch_size,
+            dropout=args.dropout,
+        )
     else:
-        model = Transformer(
+        return Transformer(
             vocab_size_plain=dataset.plain_vocab_size,
             vocab_size_cipher=dataset.cipher_vocab_size,
             d_model=args.d_model,
-            config=args.config
-        ).to(device)
+            n_heads=args.n_heads,
+            d_ff=args.d_ff,
+            num_layers=args.num_layers,
+            max_seq_len=args.max_seq_len,
+            dropout=args.dropout,
+            config=args.config,
+        )
 
-    if dist.is_initialized():
-        model = DDP(model, device_ids=[local_rank])
 
-    # 3. Optimizer & Loss
-    optimizer = optim.Adam(model.parameters(), lr=1e-4)
+# ──────────────────────────────────────────────────────────────────────────────
+# Forward pass (unified for tokenized and token-free)
+# ──────────────────────────────────────────────────────────────────────────────
+
+def forward_pass(model, src, tgt, dataset, is_blt: bool) -> torch.Tensor:
+    """
+    Run one forward pass.  Returns logits (B, T-1, V).
+    tgt is the full target sequence; we feed tgt[:,:-1] as decoder input
+    and compare against tgt[:,1:] as labels.
+    """
+    dec_input = tgt[:, :-1]    # shift right: remove last token
+    if is_blt:
+        logits = model(src, dec_input, pad_idx=dataset.pad_id_plain)
+    else:
+        logits = model(src, dec_input, dataset.pad_id_cipher, dataset.pad_id_plain)
+    return logits
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Evaluation  (val / test)
+# ──────────────────────────────────────────────────────────────────────────────
+
+def evaluate(model, loader, dataset, device, is_blt: bool, max_decode_batches: int = 2):
+    """
+    Compute validation/test loss and evaluation metrics.
+
+    Metrics are computed on the first `max_decode_batches` batches to keep
+    evaluation time tractable (greedy decoding is O(T²)).
+
+    Returns dict of metric values.
+    """
+    model.eval()
+    raw_model = model.module if isinstance(model, DDP) else model
+
     criterion = nn.CrossEntropyLoss(ignore_index=dataset.pad_id_plain)
+    total_loss   = 0.0
+    n_batches    = 0
 
-    # 4. Training Loop
-    for epoch in range(args.epochs):
-        if sampler:
-            sampler.set_epoch(epoch)
-        model.train()
-        total_loss = 0
-        
-        for step, (src, tgt) in enumerate(dataloader):
-            src = src.to(device)
-            tgt = tgt.to(device)
-            
-            optimizer.zero_grad()
-            if is_blt:
-                output = model(src, tgt[:, :-1], dataset.pad_id_plain)
-            else:
-                output = model(src, tgt[:, :-1], dataset.pad_id_cipher, dataset.pad_id_plain)
-            
-            output = output.contiguous().view(-1, output.size(-1))
-            targets = tgt[:, 1:].contiguous().view(-1)
-            
-            loss = criterion(output, targets)
-            loss.backward()
-            optimizer.step()
-            
+    # Accumulators for metrics across evaluated batches
+    all_bit_acc  = []
+    all_seq_acc  = []
+    all_lev      = []
+    all_bleu     = []
+    all_rouge1   = []
+    all_rouge2   = []
+    all_rougeL   = []
+
+    with torch.no_grad():
+        for batch_idx, (src, tgt) in enumerate(loader):
+            src, tgt = src.to(device), tgt.to(device)
+
+            logits  = forward_pass(raw_model, src, tgt, dataset, is_blt)
+            targets = tgt[:, 1:].contiguous()
+
+            loss = criterion(logits.contiguous().view(-1, logits.size(-1)), targets.view(-1))
             total_loss += loss.item()
-            
-            if local_rank == 0 and step % 50 == 0:
-                print(f"Epoch {epoch} | Step {step} | Loss: {loss.item():.4f}")
-                wandb.log({"train_loss": loss.item(), "epoch": epoch, "step": step})
+            n_batches  += 1
 
-        # Save checkpoint at the end of epoch
-        if local_rank == 0:
-            torch.save(model.state_dict(), f"outputs/checkpoint_{args.config}_epoch_{epoch}.pt")
-            
-    if local_rank == 0:
-        if args.push_to_hub and args.hf_token:
-            api = HfApi()
-            # Push to hub logic here
-            print("Pushed to Hugging Face Hub")
+            # Compute metrics on first N batches only
+            if batch_idx < max_decode_batches:
+                # Cap decode length to 128 tokens during training validation
+                # (full decode is O(T²) — too slow for every epoch).
+                # Full-length decode is only done at final test evaluation.
+                decode_max_len = min(128, tgt.size(1))
+                pred = greedy_decode(
+                    raw_model, src,
+                    src_pad_idx=dataset.pad_id_cipher,
+                    tgt_pad_idx=dataset.pad_id_plain,
+                    max_len=decode_max_len,
+                    is_blt=is_blt,
+                    bos_id=dataset.bos_id_plain if not is_blt else TokenFreeDataset.BOS_ID,
+                    eos_id=dataset.eos_id_plain if not is_blt else TokenFreeDataset.EOS_ID,
+                    dataset=dataset,
+                )
+                # Align lengths: pred starts with BOS, compare against tgt[:,1:]
+                pred_trimmed = pred[:, 1:]                    # remove BOS
+                min_len = min(pred_trimmed.size(1), targets.size(1))
+                pred_aligned = pred_trimmed[:, :min_len]
+                tgt_aligned  = targets[:, :min_len]
+
+                all_bit_acc.append(bit_level_accuracy(pred_aligned, tgt_aligned, dataset.pad_id_plain))
+                all_seq_acc.append(sequence_accuracy(pred_aligned,  tgt_aligned, dataset.pad_id_plain))
+
+                # Per-sample Levenshtein (average over batch)
+                batch_lev = []
+                for i in range(pred.size(0)):
+                    p = pred_aligned[i].tolist()
+                    t = tgt_aligned[i].tolist()
+                    batch_lev.append(calculate_levenshtein(p, t))
+                all_lev.append(sum(batch_lev) / len(batch_lev))
+
+                # BLEU / ROUGE only for tokenized models (C1–C4)
+                if not is_blt:
+                    batch_bleu   = []
+                    batch_rouge1 = []
+                    batch_rouge2 = []
+                    batch_rougeL = []
+                    for i in range(pred.size(0)):
+                        p_tok = pred_aligned[i].tolist()
+                        t_tok = tgt_aligned[i].tolist()
+                        batch_bleu.append(calculate_bleu(p_tok, t_tok))
+                        r = calculate_rouge(
+                            " ".join(map(str, p_tok)),
+                            " ".join(map(str, t_tok)),
+                        )
+                        batch_rouge1.append(r["rouge1"])
+                        batch_rouge2.append(r["rouge2"])
+                        batch_rougeL.append(r["rougeL"])
+                    all_bleu.append(sum(batch_bleu) / len(batch_bleu))
+                    all_rouge1.append(sum(batch_rouge1) / len(batch_rouge1))
+                    all_rouge2.append(sum(batch_rouge2) / len(batch_rouge2))
+                    all_rougeL.append(sum(batch_rougeL) / len(batch_rougeL))
+
+    avg = lambda lst: sum(lst) / len(lst) if lst else 0.0
+
+    metrics = {
+        "val_loss":      total_loss / n_batches,
+        "bit_accuracy":  avg(all_bit_acc),
+        "seq_accuracy":  avg(all_seq_acc),
+        "levenshtein":   avg(all_lev),
+    }
+    if not is_blt:
+        metrics["bleu"]   = avg(all_bleu)
+        metrics["rouge1"] = avg(all_rouge1)
+        metrics["rouge2"] = avg(all_rouge2)
+        metrics["rougeL"] = avg(all_rougeL)
+
+    return metrics
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Main
+# ──────────────────────────────────────────────────────────────────────────────
+
+def main():
+    parser = argparse.ArgumentParser(description="Train Transformer Variants — Assignment 1")
+
+    # Config
+    parser.add_argument("--config", type=str, default="C1",
+                        choices=["C1", "C2", "C3", "C4", "C5"])
+
+    # Training
+    parser.add_argument("--epochs",     type=int,   default=20)
+    parser.add_argument("--batch_size", type=int,   default=2,
+                        help="Per-GPU micro-batch size (total = batch_size × n_GPUs)")
+    parser.add_argument("--lr",         type=float, default=1e-4)
+    parser.add_argument("--seed",       type=int,   default=42)
+
+    # Model
+    parser.add_argument("--d_model",      type=int,   default=512)
+    parser.add_argument("--n_heads",      type=int,   default=8)
+    parser.add_argument("--d_ff",         type=int,   default=2048)
+    parser.add_argument("--num_layers",   type=int,   default=6)
+    parser.add_argument("--max_seq_len",  type=int,   default=1366,
+                        help="Used for C1–C4 only.")
+    parser.add_argument("--dropout",      type=float, default=0.1)
+
+    # BLT-specific
+    parser.add_argument("--patch_size",      type=int, default=8)
+    parser.add_argument("--n_local_layers",  type=int, default=1)
+
+    # WandB
+    parser.add_argument("--wandb_project", type=str, default="anlp-assignment-1")
+    parser.add_argument("--wandb_entity",  type=str, default="")
+
+    # Hugging Face Hub
+    parser.add_argument("--push_to_hub",  action="store_true")
+    parser.add_argument("--hf_token",     type=str,  default="")
+    parser.add_argument("--hf_repo_id",   type=str,  default="",
+                        help="e.g. your-username/anlp-a1-C1")
+
+    args = parser.parse_args()
+
+    # ── Setup ──────────────────────────────────────────────────────────────
+    torch.manual_seed(args.seed)
+    local_rank = setup_ddp()
+    device     = torch.device(f"cuda:{local_rank}" if torch.cuda.is_available() else "cpu")
+    is_blt     = (args.config == "C5")
+
+    os.makedirs("outputs", exist_ok=True)
+
+    # ── WandB (rank 0 only) ────────────────────────────────────────────────
+    if is_main():
+        wandb.init(
+            project=args.wandb_project,
+            entity=args.wandb_entity or None,
+            name=f"run-{args.config}",
+            config=vars(args),
+        )
+
+    # ── Dataset & DataLoaders ──────────────────────────────────────────────
+    if is_blt:
+        train_ds, val_ds, test_ds = TokenFreeDataset.split(seed=args.seed)
+    else:
+        train_ds, val_ds, test_ds = EncryptedDataset.split(
+            max_seq_len=args.max_seq_len, seed=args.seed
+        )
+
+    train_sampler = DistributedSampler(train_ds) if dist.is_initialized() else None
+    val_sampler   = DistributedSampler(val_ds,  shuffle=False) if dist.is_initialized() else None
+
+    train_loader = DataLoader(
+        train_ds, batch_size=args.batch_size,
+        sampler=train_sampler, shuffle=(train_sampler is None),
+        num_workers=2, pin_memory=True,
+    )
+    val_loader = DataLoader(
+        val_ds, batch_size=args.batch_size,
+        sampler=val_sampler, shuffle=False,
+        num_workers=2, pin_memory=True,
+    )
+    # Test loader (no DDP sampler — evaluate on full set on rank 0)
+    test_loader = DataLoader(
+        test_ds, batch_size=args.batch_size, shuffle=False,
+        num_workers=2, pin_memory=True,
+    )
+
+    if is_main():
+        print(f"[Dataset] train={len(train_ds)} | val={len(val_ds)} | test={len(test_ds)}")
+
+    # ── Model ─────────────────────────────────────────────────────────────
+    model = build_model(args, train_ds).to(device)
+    if dist.is_initialized():
+        model = DDP(model, device_ids=[local_rank], find_unused_parameters=False)
+
+    n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    if is_main():
+        print(f"[Model] Config={args.config} | Parameters={n_params:,}")
+
+    # ── Optimizer & Loss ──────────────────────────────────────────────────
+    optimizer = optim.Adam(model.parameters(), lr=args.lr, betas=(0.9, 0.98), eps=1e-9)
+    criterion = nn.CrossEntropyLoss(ignore_index=train_ds.pad_id_plain)
+
+    # ── Training Loop ─────────────────────────────────────────────────────
+    global_step = 0
+    for epoch in range(args.epochs):
+        if train_sampler is not None:
+            train_sampler.set_epoch(epoch)
+
+        model.train()
+        epoch_loss = 0.0
+        t0 = time.time()
+
+        for step, (src, tgt) in enumerate(train_loader):
+            src, tgt = src.to(device), tgt.to(device)
+
+            optimizer.zero_grad()
+            logits = forward_pass(model, src, tgt, train_ds, is_blt)
+
+            targets = tgt[:, 1:].contiguous().view(-1)
+            loss    = criterion(logits.contiguous().view(-1, logits.size(-1)), targets)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            optimizer.step()
+
+            epoch_loss  += loss.item()
+            global_step += 1
+
+            if is_main() and step % 50 == 0:
+                print(f"Epoch {epoch} | Step {step} | Loss {loss.item():.4f}")
+                wandb.log({"train/loss": loss.item(), "epoch": epoch, "step": global_step})
+
+        # ── Validation ────────────────────────────────────────────────────
+        val_metrics = evaluate(
+            model, val_loader, train_ds, device, is_blt,
+            max_decode_batches=10,
+        )
+
+        if is_main():
+            epoch_time = time.time() - t0
+            avg_train_loss = epoch_loss / len(train_loader)
+            print(
+                f"Epoch {epoch} done | "
+                f"train_loss={avg_train_loss:.4f} | "
+                f"val_loss={val_metrics['val_loss']:.4f} | "
+                f"bit_acc={val_metrics['bit_accuracy']:.4f} | "
+                f"seq_acc={val_metrics['seq_accuracy']:.4f} | "
+                f"lev={val_metrics['levenshtein']:.2f} | "
+                f"time={epoch_time:.1f}s"
+            )
+            log_dict = {
+                "epoch":            epoch,
+                "train/avg_loss":   avg_train_loss,
+                "val/loss":         val_metrics["val_loss"],
+                "val/bit_accuracy": val_metrics["bit_accuracy"],
+                "val/seq_accuracy": val_metrics["seq_accuracy"],
+                "val/levenshtein":  val_metrics["levenshtein"],
+            }
+            if not is_blt:
+                log_dict["val/bleu"]   = val_metrics.get("bleu",   0.0)
+                log_dict["val/rouge1"] = val_metrics.get("rouge1", 0.0)
+                log_dict["val/rouge2"] = val_metrics.get("rouge2", 0.0)
+                log_dict["val/rougeL"] = val_metrics.get("rougeL", 0.0)
+            wandb.log(log_dict)
+
+            # Save checkpoint
+            ckpt_path = f"outputs/checkpoint_{args.config}_epoch{epoch:02d}.pt"
+            raw_model = model.module if isinstance(model, DDP) else model
+            torch.save(
+                {
+                    "epoch":      epoch,
+                    "config":     args.config,
+                    "state_dict": raw_model.state_dict(),
+                    "optimizer":  optimizer.state_dict(),
+                    "val_loss":   val_metrics["val_loss"],
+                },
+                ckpt_path,
+            )
+            print(f"[Checkpoint] Saved → {ckpt_path}")
+
+    # ── Final test evaluation (rank 0 only) ───────────────────────────────
+    if is_main():
+        raw_model = model.module if isinstance(model, DDP) else model
+        test_metrics = evaluate(
+            raw_model, test_loader, test_ds, device, is_blt,
+            max_decode_batches=len(test_loader),   # full test set
+        )
+        print("\n=== TEST RESULTS ===")
+        for k, v in test_metrics.items():
+            print(f"  {k}: {v:.4f}")
+        wandb.log({f"test/{k}": v for k, v in test_metrics.items()})
+
+    # ── Hugging Face Hub upload ────────────────────────────────────────────
+    if is_main() and args.push_to_hub and args.hf_token and args.hf_repo_id:
+        api = HfApi(token=args.hf_token)
+        # Create repo if it doesn't exist
+        api.create_repo(repo_id=args.hf_repo_id, exist_ok=True, repo_type="model")
+        # Upload the entire outputs/ directory
+        upload_folder(
+            folder_path="outputs",
+            repo_id=args.hf_repo_id,
+            repo_type="model",
+            token=args.hf_token,
+            commit_message=f"Upload checkpoints for config {args.config}",
+        )
+        print(f"[HF Hub] Uploaded outputs/ → https://huggingface.co/{args.hf_repo_id}")
+
+    if is_main():
         wandb.finish()
 
     cleanup_ddp()
+
 
 if __name__ == "__main__":
     main()
