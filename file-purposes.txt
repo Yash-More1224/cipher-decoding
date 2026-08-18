@@ -1,0 +1,5 @@
+h-params.md: description of experiments that we ran to choose h-params
+plan.md: experimentation plan to choose h-params
+spec.md: inital specifications plan for the base architecure that suits the dataset features
+tasks.md: assignment requirements
+analysis.md: dataset insights
