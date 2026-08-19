@@ -31,10 +31,11 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.utils.data import DataLoader, DistributedSampler
+from torch.utils.data import DataLoader, DistributedSampler, Subset
 
 import wandb
 from huggingface_hub import HfApi, upload_folder
+from tqdm import tqdm
 
 # Project imports
 from src.dataset import EncryptedDataset, TokenFreeDataset
@@ -372,7 +373,7 @@ def evaluate(model, loader, dataset, device, is_blt: bool, max_decode_batches: i
     all_rougeL   = []
 
     with torch.no_grad():
-        for batch_idx, (src, tgt) in enumerate(loader):
+        for batch_idx, (src, tgt) in enumerate(tqdm(loader, desc="Evaluating", leave=False)):
             src, tgt = src.to(device), tgt.to(device)
 
             logits  = forward_pass(raw_model, src, tgt, dataset, is_blt)
@@ -495,6 +496,10 @@ def main():
     parser.add_argument("--hf_repo_id",   type=str,  default="",
                         help="e.g. your-username/anlp-a1-C1")
 
+    # Evaluation
+    parser.add_argument("--eval_only", action="store_true", help="Run evaluation only")
+    parser.add_argument("--checkpoint_path", type=str, default="", help="Path to checkpoint to load")
+
     args = parser.parse_args()
 
     # ── Setup ──────────────────────────────────────────────────────────────
@@ -536,8 +541,10 @@ def main():
         num_workers=2, pin_memory=True,
     )
     # Test loader (no DDP sampler — evaluate on full set on rank 0)
+    # Using only 5 test examples as requested
+    subset_test_ds = Subset(test_ds, range(min(5, len(test_ds))))
     test_loader = DataLoader(
-        test_ds, batch_size=args.batch_size, shuffle=False,
+        subset_test_ds, batch_size=args.batch_size, shuffle=False,
         num_workers=2, pin_memory=True,
     )
 
@@ -548,6 +555,28 @@ def main():
     model = build_model(args, train_ds).to(device)
     if dist.is_initialized():
         model = DDP(model, device_ids=[local_rank], find_unused_parameters=False)
+
+    if args.checkpoint_path:
+        checkpoint = torch.load(args.checkpoint_path, map_location=device, weights_only=False)
+        raw_model = model.module if isinstance(model, DDP) else model
+        raw_model.load_state_dict(checkpoint["state_dict"])
+        if is_main():
+            print(f"[Checkpoint] Loaded from {args.checkpoint_path}")
+
+    if args.eval_only:
+        if is_main():
+            raw_model = model.module if isinstance(model, DDP) else model
+            test_metrics = evaluate(
+                raw_model, test_loader, test_ds, device, is_blt,
+                max_decode_batches=len(test_loader),
+            )
+            print("\n=== EVALUATION RESULTS ===")
+            for k, v in test_metrics.items():
+                print(f"  {k}: {v:.4f}")
+            wandb.log({f"test/{k}": v for k, v in test_metrics.items()})
+            wandb.finish()
+        cleanup_ddp()
+        return
 
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     if is_main():

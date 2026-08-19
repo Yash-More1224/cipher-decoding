@@ -20,7 +20,7 @@ class ScaledDotProductAttention(nn.Module):
         
         if mask is not None:
             # Mask should be boolean (True for padding/future, False for valid)
-            scores = scores.masked_fill(mask, -1e9)
+            scores = scores.masked_fill(mask, float('-inf'))
             
         attn_weights = torch.softmax(scores, dim=-1)
         attn_weights = self.dropout(attn_weights)
