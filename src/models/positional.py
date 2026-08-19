@@ -61,12 +61,23 @@ class SinusoidalPositionalEncoding(nn.Module):
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
 
-        # (1, max_len, d_model) — batch dim for broadcasting
-        self.register_buffer("pe", pe.unsqueeze(0))
+        # persistent=False: pe is deterministic — exclude it from state_dict so
+        # that loading a checkpoint never restores a stale/smaller buffer that
+        # would break the offset arithmetic used in chunked training.
+        self.register_buffer("pe", pe.unsqueeze(0), persistent=False)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """x: (B, T, D)  →  x + pe[:, :T, :]"""
-        return x + self.pe[:, : x.size(1), :].requires_grad_(False)
+    def forward(self, x: torch.Tensor, offset: int = 0) -> torch.Tensor:
+        """x: (B, T, D)  →  x + pe[:, offset:offset+T, :]
+        
+        Args:
+            x:      (B, T, D) input embeddings
+            offset: Starting position index. Use the chunk's byte-offset in the
+                    original sequence so the encoder sees absolute positions,
+                    not always 0, 1, 2, …  This is critical for position-
+                    dependent ciphers (stream/Vigenère) where the same byte
+                    value at position 100 decodes differently than at position 0.
+        """
+        return x + self.pe[:, offset : offset + x.size(1), :].requires_grad_(False)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

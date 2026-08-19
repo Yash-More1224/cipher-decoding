@@ -211,7 +211,10 @@ class Transformer(nn.Module):
         self.tgt_emb = nn.Embedding(vocab_size_plain,  d_model)
 
         if self.pos_enc_type == "sinusoidal":
-            self.pos_enc = SinusoidalPositionalEncoding(d_model, max_len=max_seq_len)
+            # Use a large fixed max_len (4096) instead of max_seq_len so the PE
+            # buffer can cover any absolute byte-offset produced by chunked training.
+            # PE is deterministic and costs ~4MB — no reason to be stingy here.
+            self.pos_enc = SinusoidalPositionalEncoding(d_model, max_len=4096)
 
         self.encoder_blocks = nn.ModuleList([
             EncoderBlock(d_model, n_heads, d_ff, dropout, attention_type, norm_type, kv_heads)
@@ -241,7 +244,7 @@ class Transformer(nn.Module):
         sin, cos = get_rotary_matrix(max(src_len, tgt_len), d_k, device)
         return sin, cos
 
-    def forward(self, src, tgt, pad_idx_src, pad_idx_tgt):
+    def forward(self, src, tgt, pad_idx_src, pad_idx_tgt, src_offset: int = 0):
         src_mask, tgt_mask = self._make_masks(src, tgt, pad_idx_src, pad_idx_tgt)
 
         enc_out = self.src_emb(src)
@@ -249,8 +252,8 @@ class Transformer(nn.Module):
 
         sin, cos = None, None
         if self.pos_enc_type == "sinusoidal":
-            enc_out = self.pos_enc(enc_out)
-            dec_out = self.pos_enc(dec_out)
+            enc_out = self.pos_enc(enc_out, offset=src_offset)  # absolute offset!
+            dec_out = self.pos_enc(dec_out)  # decoder always starts at 0
         else:
             sin, cos = self._get_rope(src.size(1), tgt.size(1), src.device)
 
@@ -330,7 +333,7 @@ def build_model(args, dataset) -> nn.Module:
 # Forward pass (unified for tokenized and token-free)
 # ──────────────────────────────────────────────────────────────────────────────
 
-def forward_pass(model, src, tgt, dataset, is_blt: bool) -> torch.Tensor:
+def forward_pass(model, src, tgt, dataset, is_blt: bool, src_offset: int = 0) -> torch.Tensor:
     """
     Run one forward pass.  Returns logits (B, T-1, V).
     tgt is the full target sequence; we feed tgt[:,:-1] as decoder input
@@ -340,7 +343,8 @@ def forward_pass(model, src, tgt, dataset, is_blt: bool) -> torch.Tensor:
     if is_blt:
         logits = model(src, dec_input, pad_idx=dataset.pad_id_plain)
     else:
-        logits = model(src, dec_input, dataset.pad_id_cipher, dataset.pad_id_plain)
+        logits = model(src, dec_input, dataset.pad_id_cipher, dataset.pad_id_plain,
+                       src_offset=src_offset)
     return logits
 
 
@@ -374,10 +378,15 @@ def evaluate(model, loader, dataset, device, is_blt: bool, max_decode_batches: i
     all_rougeL   = []
 
     with torch.no_grad():
-        for batch_idx, (src, tgt) in enumerate(tqdm(loader, desc="Evaluating", leave=False)):
-            src, tgt = src.to(device), tgt.to(device)
+        for batch_idx, batch in enumerate(tqdm(loader, desc="Evaluating", leave=False)):
+            if is_blt:
+                src, tgt = batch[0].to(device), batch[1].to(device)
+                src_offset = 0
+            else:
+                src, tgt, offsets = batch[0].to(device), batch[1].to(device), batch[2]
+                src_offset = int(offsets.min().item())
 
-            logits  = forward_pass(raw_model, src, tgt, dataset, is_blt)
+            logits  = forward_pass(raw_model, src, tgt, dataset, is_blt, src_offset=src_offset)
             targets = tgt[:, 1:].contiguous()
 
             loss = criterion(logits.contiguous().view(-1, logits.size(-1)), targets.view(-1))
@@ -471,7 +480,9 @@ def main():
     parser.add_argument("--epochs",     type=int,   default=50)
     parser.add_argument("--batch_size", type=int,   default=20,
                         help="Per-GPU micro-batch size (total = batch_size × n_GPUs)")
-    parser.add_argument("--lr",              type=float, default=1e-3)
+    parser.add_argument("--lr",              type=float, default=1.5e-3)
+    parser.add_argument("--warmup_ratio",    type=float, default=0.05,
+                        help="Fraction of total steps used for linear LR warmup.")
     parser.add_argument("--grad_accum_steps", type=int,   default=3,
                         help="Accumulate gradients over N mini-batches before stepping optimizer. "
                              "Effective batch = batch_size * n_GPUs * grad_accum_steps.")
@@ -482,13 +493,20 @@ def main():
     parser.add_argument("--n_heads",      type=int,   default=8)
     parser.add_argument("--d_ff",         type=int,   default=1024)
     parser.add_argument("--num_layers",   type=int,   default=6)
-    parser.add_argument("--max_seq_len",  type=int,   default=512,
+    parser.add_argument("--max_seq_len",  type=int,   default=850,
                         help="Sequence length (for C1–C4 only)")
-    parser.add_argument("--dropout",      type=float, default=0.1)
+    parser.add_argument("--dropout",      type=float, default=0.3)
 
     # BLT-specific
     parser.add_argument("--patch_size",      type=int, default=8)
     parser.add_argument("--n_local_layers",  type=int, default=1)
+    parser.add_argument("--n_global_layers", type=int, default=4)
+
+    # Chunked training (C1-C4 only)
+    parser.add_argument("--chunk_size", type=int, default=64,
+                        help="Segment each cipher/plain line into non-overlapping chunks of "
+                             "this many bytes. 0 = no chunking (original per-line behaviour). "
+                             "E.g. 64 turns 4k lines into ~50k training samples.")
 
     # WandB
     parser.add_argument("--wandb_project", type=str, default="anlp-assignment-1")
@@ -530,7 +548,7 @@ def main():
         train_ds, val_ds, test_ds = TokenFreeDataset.split(seed=args.seed)
     else:
         train_ds, val_ds, test_ds = EncryptedDataset.split(
-            max_seq_len=args.max_seq_len, seed=args.seed
+            max_seq_len=args.max_seq_len, chunk_size=args.chunk_size, seed=args.seed
         )
 
     train_sampler = DistributedSampler(train_ds) if dist.is_initialized() else None
@@ -589,17 +607,27 @@ def main():
         print(f"[Model] Config={args.config} | Parameters={n_params:,}")
 
     # ── Optimizer & Loss ──────────────────────────────────────────────────
-    optimizer = optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.98), eps=1e-9, weight_decay=0.01)
+    optimizer = optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.98), eps=1e-9, weight_decay=0.05)
     
     # Calculate total training steps for the scheduler
     steps_per_epoch = len(train_loader)
     total_steps = args.epochs * steps_per_epoch
     
-    # Cosine Annealing reduces the learning rate from max (args.lr) down to 0 over total_steps
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=total_steps)
+    # Warmup + Cosine Annealing schedule
+    # Phase 1: LinearLR ramps from 0 → peak LR over `warmup_steps` steps
+    # Phase 2: CosineAnnealingLR decays from peak LR → 0 over remaining steps
+    warmup_steps  = max(1, int(args.warmup_ratio * total_steps))
+    cosine_steps  = max(1, total_steps - warmup_steps)
+    warmup_sched  = optim.lr_scheduler.LinearLR(
+        optimizer, start_factor=1e-8, end_factor=1.0, total_iters=warmup_steps
+    )
+    cosine_sched  = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cosine_steps)
+    scheduler     = optim.lr_scheduler.SequentialLR(
+        optimizer, schedulers=[warmup_sched, cosine_sched], milestones=[warmup_steps]
+    )
     
     # Label smoothing prevents the model from becoming overconfident (helps generalization)
-    criterion = nn.CrossEntropyLoss(ignore_index=train_ds.pad_id_plain, label_smoothing=0.1)
+    criterion = nn.CrossEntropyLoss(ignore_index=train_ds.pad_id_plain, label_smoothing=0.2)
     
     # Automatic Mixed Precision (AMP) scaler for fp16 training
     scaler = torch.amp.GradScaler("cuda")
@@ -615,7 +643,11 @@ def main():
             latest_ckpt = ckpts[-1]   # sorted lexicographically; epoch00 < epoch01 < ...
             checkpoint = torch.load(latest_ckpt, map_location=device, weights_only=False)
             raw_model  = model.module if isinstance(model, DDP) else model
-            raw_model.load_state_dict(checkpoint["state_dict"])
+            # Remove pe from the checkpoint if it exists, so PyTorch doesn't 
+            # silently overwrite our new 4096-size buffer with the old 850-size one.
+            if "pos_enc.pe" in checkpoint["state_dict"]:
+                del checkpoint["state_dict"]["pos_enc.pe"]
+            raw_model.load_state_dict(checkpoint["state_dict"], strict=False)
             optimizer.load_state_dict(checkpoint["optimizer"])
             start_epoch = checkpoint["epoch"] + 1          # resume from NEXT epoch
             global_step = start_epoch * steps_per_epoch
@@ -637,17 +669,22 @@ def main():
         epoch_loss = 0.0
         t0 = time.time()
 
-        for step, (src, tgt) in enumerate(train_loader):
-            src, tgt = src.to(device), tgt.to(device)
+        for step, batch in enumerate(train_loader):
+            if is_blt:
+                src, tgt = batch[0].to(device), batch[1].to(device)
+                src_offset = 0
+            else:
+                src, tgt, offsets = batch[0].to(device), batch[1].to(device), batch[2]
+                # All samples in a batch may have different offsets; we take the min
+                # so the positional encoding is conservative (shifts toward the true start).
+                src_offset = int(offsets.min().item())
 
             is_accumulating = (step + 1) % args.grad_accum_steps != 0
 
-            # Forward pass with Automatic Mixed Precision (fp16)
-            # Use no_sync() during accumulation steps to skip redundant DDP all-reduces
             ctx = model.no_sync() if (isinstance(model, DDP) and is_accumulating) else contextlib.nullcontext()
             with ctx:
                 with torch.autocast(device_type="cuda", dtype=torch.float16):
-                    logits = forward_pass(model, src, tgt, train_ds, is_blt)
+                    logits = forward_pass(model, src, tgt, train_ds, is_blt, src_offset=src_offset)
                     targets = tgt[:, 1:].contiguous().view(-1)
                     # Divide loss by accum steps so the sum equals the mean over the effective batch
                     loss = criterion(logits.contiguous().view(-1, logits.size(-1)), targets)
