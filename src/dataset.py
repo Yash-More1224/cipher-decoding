@@ -29,6 +29,9 @@ import random
 import torch
 from torch.utils.data import Dataset, Subset
 from tokenizers import Tokenizer
+from tokenizers.models import BPE
+from tokenizers.trainers import BpeTrainer
+from tokenizers.pre_tokenizers import Whitespace
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -75,23 +78,17 @@ class EncryptedDataset(Dataset):
         _lines: tuple | None = None,   # internal use by _from_lines()
     ):
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        plain_tok_path  = os.path.join(base_dir, "h-params", "tokenizers", "plain_tokenizer.json")
-        cipher_tok_path = os.path.join(base_dir, "h-params", "tokenizers", "cipher_tokenizer.json")
+        outputs_dir = os.path.join(base_dir, "outputs")
+        os.makedirs(outputs_dir, exist_ok=True)
+        plain_tok_path  = os.path.join(outputs_dir, "plain_tokenizer.json")
+        cipher_tok_path = os.path.join(outputs_dir, "cipher_tokenizer.json")
 
-        if not os.path.exists(plain_tok_path) or not os.path.exists(cipher_tok_path):
-            raise FileNotFoundError(
-                "Tokenizers not found. Please run h-params/1_max_seq_len.py first."
-            )
-
-        self.plain_tokenizer  = Tokenizer.from_file(plain_tok_path)
-        self.cipher_tokenizer = Tokenizer.from_file(cipher_tok_path)
-        self.max_seq_len = max_seq_len
+        plain_path  = os.path.join(base_dir, "Dataset_A1", plain_file)
+        cipher_path = os.path.join(base_dir, "Dataset_A1", cipher_file)
 
         if _lines is not None:
             self.plain_lines, self.cipher_lines = _lines
         else:
-            plain_path  = os.path.join(base_dir, "Dataset_A1", plain_file)
-            cipher_path = os.path.join(base_dir, "Dataset_A1", cipher_file)
             with open(plain_path,  "r", encoding="utf-8") as f:
                 self.plain_lines = f.readlines()
             with open(cipher_path, "r", encoding="utf-8") as f:
@@ -99,6 +96,42 @@ class EncryptedDataset(Dataset):
 
         assert len(self.plain_lines) == len(self.cipher_lines), \
             "Mismatched line counts between plaintext and ciphertext files."
+
+        if not os.path.exists(plain_tok_path) or not os.path.exists(cipher_tok_path):
+            print("Tokenizers not found in outputs/. Training them now...")
+            
+            # Plaintext tokenizer
+            with open(plain_path, 'r', encoding='utf-8') as f:
+                plain_full = f.readlines()
+            plain_tok = Tokenizer(BPE(unk_token="[UNK]"))
+            plain_tok.pre_tokenizer = Whitespace()
+            trainer = BpeTrainer(special_tokens=["[UNK]", "[BOS]", "[EOS]", "[PAD]"], vocab_size=5000)
+            plain_tok.train_from_iterator(plain_full, trainer=trainer)
+            plain_tok.save(plain_tok_path)
+
+            # Ciphertext tokenizer
+            with open(cipher_path, 'r', encoding='utf-8') as f:
+                cipher_full = f.readlines()
+            
+            def local_bits_to_chars(bit_string: str) -> str:
+                chars = []
+                bit_string = bit_string.strip()
+                for i in range(0, len(bit_string), 8):
+                    chunk = bit_string[i:i+8]
+                    if len(chunk) == 8:
+                        chars.append(chr(int(chunk, 2) + 256))
+                return "".join(chars)
+            
+            cipher_converted = [local_bits_to_chars(line) for line in cipher_full]
+            cipher_tok = Tokenizer(BPE(unk_token="[UNK]"))
+            cipher_tok.pre_tokenizer = Whitespace()
+            cipher_tok.train_from_iterator(cipher_converted, trainer=trainer)
+            cipher_tok.save(cipher_tok_path)
+            print("Finished training and saving tokenizers to outputs/.")
+
+        self.plain_tokenizer  = Tokenizer.from_file(plain_tok_path)
+        self.cipher_tokenizer = Tokenizer.from_file(cipher_tok_path)
+        self.max_seq_len = max_seq_len
 
         self.plain_vocab_size  = self.plain_tokenizer.get_vocab_size()
         self.cipher_vocab_size = self.cipher_tokenizer.get_vocab_size()
@@ -164,9 +197,18 @@ class EncryptedDataset(Dataset):
         sequence += [pad_id] * (self.max_seq_len - len(sequence))
         return torch.tensor(sequence, dtype=torch.long)
 
+    def _bits_to_chars(self, bit_string: str) -> str:
+        chars = []
+        for i in range(0, len(bit_string), 8):
+            chunk = bit_string[i:i+8]
+            if len(chunk) == 8:
+                chars.append(chr(int(chunk, 2) + 256))
+        return "".join(chars)
+
     def __getitem__(self, idx: int):
         plain_line  = self.plain_lines[idx].strip()
         cipher_line = self.cipher_lines[idx].strip()
+        cipher_line = self._bits_to_chars(cipher_line)
 
         plain_ids  = self.plain_tokenizer.encode(plain_line).ids
         cipher_ids = self.cipher_tokenizer.encode(cipher_line).ids

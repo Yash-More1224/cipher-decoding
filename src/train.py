@@ -23,6 +23,7 @@ Model classes defined here (to avoid an extra transformer.py file):
 
 import os
 import argparse
+import contextlib
 import time
 import math
 
@@ -467,19 +468,22 @@ def main():
                         choices=["C1", "C2", "C3", "C4", "C5"])
 
     # Training
-    parser.add_argument("--epochs",     type=int,   default=20)
-    parser.add_argument("--batch_size", type=int,   default=2,
+    parser.add_argument("--epochs",     type=int,   default=50)
+    parser.add_argument("--batch_size", type=int,   default=20,
                         help="Per-GPU micro-batch size (total = batch_size × n_GPUs)")
-    parser.add_argument("--lr",         type=float, default=1e-4)
-    parser.add_argument("--seed",       type=int,   default=42)
+    parser.add_argument("--lr",              type=float, default=1e-3)
+    parser.add_argument("--grad_accum_steps", type=int,   default=3,
+                        help="Accumulate gradients over N mini-batches before stepping optimizer. "
+                             "Effective batch = batch_size * n_GPUs * grad_accum_steps.")
+    parser.add_argument("--seed",            type=int,   default=42)
 
     # Model
     parser.add_argument("--d_model",      type=int,   default=256)
     parser.add_argument("--n_heads",      type=int,   default=8)
     parser.add_argument("--d_ff",         type=int,   default=1024)
     parser.add_argument("--num_layers",   type=int,   default=6)
-    parser.add_argument("--max_seq_len",  type=int,   default=1366,
-                        help="Used for C1–C4 only.")
+    parser.add_argument("--max_seq_len",  type=int,   default=512,
+                        help="Sequence length (for C1–C4 only)")
     parser.add_argument("--dropout",      type=float, default=0.1)
 
     # BLT-specific
@@ -496,9 +500,11 @@ def main():
     parser.add_argument("--hf_repo_id",   type=str,  default="",
                         help="e.g. your-username/anlp-a1-C1")
 
-    # Evaluation
-    parser.add_argument("--eval_only", action="store_true", help="Run evaluation only")
-    parser.add_argument("--checkpoint_path", type=str, default="", help="Path to checkpoint to load")
+    # Evaluation / Resuming
+    parser.add_argument("--eval_only",      action="store_true", help="Run evaluation only")
+    parser.add_argument("--checkpoint_path", type=str, default="", help="Path to checkpoint to load for eval")
+    parser.add_argument("--resume",          action="store_true",
+                        help="Resume training from the latest checkpoint in outputs/ for this config")
 
     args = parser.parse_args()
 
@@ -598,9 +604,32 @@ def main():
     # Automatic Mixed Precision (AMP) scaler for fp16 training
     scaler = torch.amp.GradScaler("cuda")
 
-    # ── Training Loop ─────────────────────────────────────────────────────
+    # ── Resume (auto-detect latest checkpoint) ────────────────────────────
+    start_epoch = 0
     global_step = 0
-    for epoch in range(args.epochs):
+    if args.resume:
+        import glob
+        pattern = f"outputs/checkpoint_{args.config}_epoch*.pt"
+        ckpts = sorted(glob.glob(pattern))
+        if ckpts:
+            latest_ckpt = ckpts[-1]   # sorted lexicographically; epoch00 < epoch01 < ...
+            checkpoint = torch.load(latest_ckpt, map_location=device, weights_only=False)
+            raw_model  = model.module if isinstance(model, DDP) else model
+            raw_model.load_state_dict(checkpoint["state_dict"])
+            optimizer.load_state_dict(checkpoint["optimizer"])
+            start_epoch = checkpoint["epoch"] + 1          # resume from NEXT epoch
+            global_step = start_epoch * steps_per_epoch
+            # Advance the scheduler to match where we left off
+            for _ in range(global_step):
+                scheduler.step()
+            if is_main():
+                print(f"[Resume] Loaded checkpoint '{latest_ckpt}' → resuming from epoch {start_epoch}")
+        else:
+            if is_main():
+                print(f"[Resume] No checkpoints found matching '{pattern}' — starting from scratch.")
+
+    # ── Training Loop ─────────────────────────────────────────────────────
+    for epoch in range(start_epoch, args.epochs):
         if train_sampler is not None:
             train_sampler.set_epoch(epoch)
 
@@ -611,49 +640,69 @@ def main():
         for step, (src, tgt) in enumerate(train_loader):
             src, tgt = src.to(device), tgt.to(device)
 
-            optimizer.zero_grad()
-            
-            # Forward pass with Automatic Mixed Precision (fp16)
-            with torch.autocast(device_type="cuda", dtype=torch.float16):
-                logits = forward_pass(model, src, tgt, train_ds, is_blt)
-                targets = tgt[:, 1:].contiguous().view(-1)
-                loss    = criterion(logits.contiguous().view(-1, logits.size(-1)), targets)
-            
-            # Backward pass with scaled gradients
-            scaler.scale(loss).backward()
-            
-            # Unscale before clipping so max_norm=1.0 is accurate
-            scaler.unscale_(optimizer)
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            
-            # Step optimizer and update scaler
-            scaler.step(optimizer)
-            scaler.update()
-            
-            scheduler.step()
+            is_accumulating = (step + 1) % args.grad_accum_steps != 0
 
-            epoch_loss  += loss.item()
-            global_step += 1
+            # Forward pass with Automatic Mixed Precision (fp16)
+            # Use no_sync() during accumulation steps to skip redundant DDP all-reduces
+            ctx = model.no_sync() if (isinstance(model, DDP) and is_accumulating) else contextlib.nullcontext()
+            with ctx:
+                with torch.autocast(device_type="cuda", dtype=torch.float16):
+                    logits = forward_pass(model, src, tgt, train_ds, is_blt)
+                    targets = tgt[:, 1:].contiguous().view(-1)
+                    # Divide loss by accum steps so the sum equals the mean over the effective batch
+                    loss = criterion(logits.contiguous().view(-1, logits.size(-1)), targets)
+                    loss = loss / args.grad_accum_steps
+
+                # Backward pass with scaled gradients
+                scaler.scale(loss).backward()
+
+            # Only step the optimizer after accumulating enough gradients
+            if not is_accumulating:
+                # Unscale before clipping so max_norm=1.0 is accurate
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+                # Step optimizer and update scaler
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad(set_to_none=True)
+
+                scheduler.step()
+                global_step += 1
+
+            # Undo the loss scaling for logging (show the un-divided loss)
+            epoch_loss += loss.item() * args.grad_accum_steps
 
             if is_main() and step % 50 == 0:
-                print(f"Epoch {epoch} | Step {step} | Loss {loss.item():.4f}")
-                wandb.log({"train/loss": loss.item(), "epoch": epoch, "step": global_step})
+                print(f"Epoch {epoch} | Step {step} | Loss {loss.item() * args.grad_accum_steps:.4f}")
+                wandb.log({"train/loss": loss.item() * args.grad_accum_steps, "epoch": epoch, "step": global_step})
 
-        # ── Validation (Removed) ──────────────────────────────────────────
+        # ── Validation ────────────────────────────────────────────────────────────
+        
+        # Evaluate loss every epoch. Run full decoding evaluation every 5 epochs.
+        decode_batches = 2 if (epoch % 5 == 0 or epoch == args.epochs - 1) else 0
+        val_metrics = evaluate(model, val_loader, train_ds, device, is_blt, max_decode_batches=decode_batches)
         
         if is_main():
             epoch_time = time.time() - t0
             avg_train_loss = epoch_loss / len(train_loader)
+            
+            val_str = f" | val_loss={val_metrics['val_loss']:.4f}" if "val_loss" in val_metrics else ""
             print(
                 f"Epoch {epoch} done | "
-                f"train_loss={avg_train_loss:.4f} | "
+                f"train_loss={avg_train_loss:.4f}{val_str} | "
                 f"time={epoch_time:.1f}s"
             )
             
-            wandb.log({
+            log_dict = {
                 "epoch":          epoch,
+                "step":           global_step,
                 "train/avg_loss": avg_train_loss,
-            })
+            }
+            if val_metrics:
+                for k, v in val_metrics.items():
+                    log_dict[f"val/{k}"] = v
+            wandb.log(log_dict)
 
             # Save checkpoint
             ckpt_path = f"outputs/checkpoint_{args.config}_epoch{epoch:02d}.pt"
@@ -664,7 +713,7 @@ def main():
                     "config":     args.config,
                     "state_dict": raw_model.state_dict(),
                     "optimizer":  optimizer.state_dict(),
-                    # removed val_loss from checkpoint dict
+                    "val_loss":   val_metrics.get("val_loss", None),
                 },
                 ckpt_path,
             )
