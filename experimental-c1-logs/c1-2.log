@@ -1,0 +1,60 @@
+[Dataset] train=39683 | val=4685 | test=4782
+[Model] Config=C1 | Parameters=13,691,016
+/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:227: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:243: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+[Resume] Loaded checkpoint 'outputs/checkpoint_C1_epoch07.pt' → resuming from epoch 8
+Epoch 8 | Step 0 | Loss 5.9117
+Epoch 8 | Step 50 | Loss 5.8182
+Epoch 8 | Step 100 | Loss 5.7390
+Epoch 8 | Step 150 | Loss 5.5404
+Epoch 8 | Step 200 | Loss 5.8257
+Epoch 8 | Step 250 | Loss 5.5978
+Epoch 8 | Step 300 | Loss 5.6401
+Epoch 8 | Step 350 | Loss 5.6776
+Epoch 8 | Step 400 | Loss 5.5539
+Epoch 8 | Step 450 | Loss 5.6833
+Epoch 8 | Step 500 | Loss 5.7786
+Epoch 8 | Step 550 | Loss 5.6105
+Epoch 8 | Step 600 | Loss 5.8317
+Epoch 8 | Step 650 | Loss 5.5867
+Epoch 8 | Step 700 | Loss 5.5693
+Epoch 8 | Step 750 | Loss 5.6693
+Epoch 8 | Step 800 | Loss 5.5841
+Epoch 8 | Step 850 | Loss 5.7427
+Epoch 8 | Step 900 | Loss 5.6938
+Epoch 8 | Step 950 | Loss 5.3594
+Traceback (most recent call last):                                                                                                                                 
+Epoch 8 done | train_loss=5.6930 | val_loss=3.7160 | time=142.5s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch08.pt
+Epoch 9 | Step 0 | Loss 5.4285
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home2/yash.more/anlp/a1/src/train.py", line 789, in <module>
+    main()
+  File "/home2/yash.more/anlp/a1/src/train.py", line 690, in main
+    scaler.scale(loss).backward()
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/_tensor.py", line 626, in backward
+    torch.autograd.backward(
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/autograd/__init__.py", line 347, in backward
+    _engine_run_backward(
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0]:   File "/home2/yash.more/anlp/a1/src/train.py", line 789, in <module>
+[rank0]:     main()
+[rank0]:   File "/home2/yash.more/anlp/a1/src/train.py", line 690, in main
+[rank0]:     scaler.scale(loss).backward()
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/_tensor.py", line 626, in backward
+[rank0]:     torch.autograd.backward(
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/autograd/__init__.py", line 347, in backward
+[rank0]:     _engine_run_backward(
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
+[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: KeyboardInterrupt

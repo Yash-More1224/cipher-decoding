@@ -73,7 +73,7 @@ def greedy_decode(
     for _ in range(max_len - 1):
         # Forward pass — get logits for the full current prefix
         if is_blt:
-            logits = model(src, tgt, pad_idx=tgt_pad_idx)
+            logits = model(src, tgt, pad_idx_src=src_pad_idx, pad_idx_tgt=tgt_pad_idx)
         else:
             logits = model(src, tgt, src_pad_idx, tgt_pad_idx)
         # logits: (B, T_so_far, vocab)

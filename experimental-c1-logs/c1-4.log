@@ -1,0 +1,462 @@
+[Dataset] train=39683 | val=4685 | test=4782
+[Model] Config=C1 | Parameters=13,691,016
+/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:227: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:243: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+[Resume] Loaded checkpoint 'outputs/checkpoint_C1_epoch12.pt' → resuming from epoch 13
+Epoch 13 | Step 0 | Loss 3.8193
+Epoch 13 | Step 50 | Loss 3.6658
+Epoch 13 | Step 100 | Loss 3.7247
+Epoch 13 | Step 150 | Loss 3.6599
+Epoch 13 | Step 200 | Loss 3.9644
+Epoch 13 | Step 250 | Loss 3.4129
+Epoch 13 | Step 300 | Loss 3.7366
+Epoch 13 | Step 350 | Loss 3.7862
+Epoch 13 | Step 400 | Loss 3.6231
+Epoch 13 | Step 450 | Loss 3.7501
+                                                                                                                                                                                       
+Epoch 13 done | train_loss=3.7044 | val_loss=1.0329 | time=130.3s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch13.pt
+Epoch 14 | Step 0 | Loss 3.5251
+Epoch 14 | Step 50 | Loss 3.5531
+Epoch 14 | Step 100 | Loss 3.5913
+Epoch 14 | Step 150 | Loss 3.4030
+Epoch 14 | Step 200 | Loss 3.4292
+Epoch 14 | Step 250 | Loss 3.4189
+Epoch 14 | Step 300 | Loss 3.6415
+Epoch 14 | Step 350 | Loss 3.5599
+Epoch 14 | Step 400 | Loss 3.4255
+Epoch 14 | Step 450 | Loss 3.5287
+Epoch 14 done | train_loss=3.5078 | val_loss=0.8469 | time=130.4s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch14.pt
+Epoch 15 | Step 0 | Loss 3.3128
+Epoch 15 | Step 50 | Loss 3.3049
+Epoch 15 | Step 100 | Loss 3.3474
+Epoch 15 | Step 150 | Loss 3.4730
+Epoch 15 | Step 200 | Loss 3.3446
+Epoch 15 | Step 250 | Loss 3.4698
+Epoch 15 | Step 300 | Loss 3.3623
+Epoch 15 | Step 350 | Loss 3.4347
+Epoch 15 | Step 400 | Loss 3.1600
+Epoch 15 | Step 450 | Loss 3.3055
+Epoch 15 done | train_loss=3.3656 | val_loss=0.6711 | time=130.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch15.pt
+Epoch 16 | Step 0 | Loss 3.2035
+Epoch 16 | Step 50 | Loss 3.1634
+Epoch 16 | Step 100 | Loss 3.2908
+Epoch 16 | Step 150 | Loss 3.2592
+Epoch 16 | Step 200 | Loss 3.3040
+Epoch 16 | Step 250 | Loss 3.3534
+Epoch 16 | Step 300 | Loss 3.1274
+Epoch 16 | Step 350 | Loss 3.2018
+Epoch 16 | Step 400 | Loss 3.3511
+Epoch 16 | Step 450 | Loss 3.1493
+Epoch 16 done | train_loss=3.2283 | val_loss=0.5563 | time=129.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch16.pt
+Epoch 17 | Step 0 | Loss 3.1055
+Epoch 17 | Step 50 | Loss 3.0733
+Epoch 17 | Step 100 | Loss 3.2880
+Epoch 17 | Step 150 | Loss 3.3033
+Epoch 17 | Step 200 | Loss 3.0401
+Epoch 17 | Step 250 | Loss 3.1220
+Epoch 17 | Step 300 | Loss 3.0299
+Epoch 17 | Step 350 | Loss 3.0756
+Epoch 17 | Step 400 | Loss 3.2160
+Epoch 17 | Step 450 | Loss 3.1401
+Epoch 17 done | train_loss=3.1485 | val_loss=0.4568 | time=130.0s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch17.pt
+Epoch 18 | Step 0 | Loss 3.0605
+Epoch 18 | Step 50 | Loss 3.0259
+Epoch 18 | Step 100 | Loss 3.1576
+Epoch 18 | Step 150 | Loss 2.9839
+Epoch 18 | Step 200 | Loss 3.1382
+Epoch 18 | Step 250 | Loss 3.0049
+Epoch 18 | Step 300 | Loss 2.9381
+Epoch 18 | Step 350 | Loss 3.0096
+Epoch 18 | Step 400 | Loss 2.8770
+Epoch 18 | Step 450 | Loss 3.0948
+Epoch 18 done | train_loss=3.0645 | val_loss=0.4047 | time=130.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch18.pt
+Epoch 19 | Step 0 | Loss 3.0736
+Epoch 19 | Step 50 | Loss 2.9471
+Epoch 19 | Step 100 | Loss 2.9925
+Epoch 19 | Step 150 | Loss 2.9341
+Epoch 19 | Step 200 | Loss 3.0595
+Epoch 19 | Step 250 | Loss 2.9440
+Epoch 19 | Step 300 | Loss 2.9105
+Epoch 19 | Step 350 | Loss 2.9542
+Epoch 19 | Step 400 | Loss 2.9066
+Epoch 19 | Step 450 | Loss 2.9566
+Epoch 19 done | train_loss=2.9903 | val_loss=0.3698 | time=129.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch19.pt
+Epoch 20 | Step 0 | Loss 2.9856
+Epoch 20 | Step 50 | Loss 2.9716
+Epoch 20 | Step 100 | Loss 3.0008
+Epoch 20 | Step 150 | Loss 2.8920
+Epoch 20 | Step 200 | Loss 2.9718
+Epoch 20 | Step 250 | Loss 2.8898
+Epoch 20 | Step 300 | Loss 2.8949
+Epoch 20 | Step 350 | Loss 2.7884
+Epoch 20 | Step 400 | Loss 2.9319
+Epoch 20 | Step 450 | Loss 2.8374
+Epoch 20 done | train_loss=2.9329 | val_loss=0.3331 | time=131.3s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch20.pt
+Epoch 21 | Step 0 | Loss 2.9787
+Epoch 21 | Step 50 | Loss 2.7721
+Epoch 21 | Step 100 | Loss 2.8240
+Epoch 21 | Step 150 | Loss 2.7625
+Epoch 21 | Step 200 | Loss 2.9834
+Epoch 21 | Step 250 | Loss 2.9225
+Epoch 21 | Step 300 | Loss 2.8314
+Epoch 21 | Step 350 | Loss 2.9165
+Epoch 21 | Step 400 | Loss 2.8951
+Epoch 21 | Step 450 | Loss 2.8396
+Epoch 21 done | train_loss=2.8912 | val_loss=0.2865 | time=130.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch21.pt
+Epoch 22 | Step 0 | Loss 3.1190
+Epoch 22 | Step 50 | Loss 2.8802
+Epoch 22 | Step 100 | Loss 2.7994
+Epoch 22 | Step 150 | Loss 2.9345
+Epoch 22 | Step 200 | Loss 2.7770
+Epoch 22 | Step 250 | Loss 2.8158
+Epoch 22 | Step 300 | Loss 2.8332
+Epoch 22 | Step 350 | Loss 2.7432
+Epoch 22 | Step 400 | Loss 2.8317
+Epoch 22 | Step 450 | Loss 2.7690
+Epoch 22 done | train_loss=2.8511 | val_loss=0.2970 | time=131.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch22.pt
+Epoch 23 | Step 0 | Loss 2.8103
+Epoch 23 | Step 50 | Loss 2.8609
+Epoch 23 | Step 100 | Loss 2.8068
+Epoch 23 | Step 150 | Loss 2.8323
+Epoch 23 | Step 200 | Loss 2.7056
+Epoch 23 | Step 250 | Loss 2.7749
+Epoch 23 | Step 300 | Loss 2.7516
+Epoch 23 | Step 350 | Loss 2.8166
+Epoch 23 | Step 400 | Loss 2.8571
+Epoch 23 | Step 450 | Loss 2.8093
+Epoch 23 done | train_loss=2.8201 | val_loss=0.2668 | time=129.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch23.pt
+Epoch 24 | Step 0 | Loss 2.7835
+Epoch 24 | Step 50 | Loss 2.7577
+Epoch 24 | Step 100 | Loss 2.8430
+Epoch 24 | Step 150 | Loss 2.7492
+Epoch 24 | Step 200 | Loss 2.8685
+Epoch 24 | Step 250 | Loss 2.8469
+Epoch 24 | Step 300 | Loss 2.8500
+Epoch 24 | Step 350 | Loss 2.6730
+Epoch 24 | Step 400 | Loss 2.6787
+Epoch 24 | Step 450 | Loss 2.6623
+Epoch 24 done | train_loss=2.7869 | val_loss=0.2385 | time=128.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch24.pt
+Epoch 25 | Step 0 | Loss 2.7628
+Epoch 25 | Step 50 | Loss 2.7015
+Epoch 25 | Step 100 | Loss 2.7625
+Epoch 25 | Step 150 | Loss 2.7944
+Epoch 25 | Step 200 | Loss 2.7658
+Epoch 25 | Step 250 | Loss 2.7334
+Epoch 25 | Step 300 | Loss 2.9526
+Epoch 25 | Step 350 | Loss 2.7271
+Epoch 25 | Step 400 | Loss 2.6745
+Epoch 25 | Step 450 | Loss 2.7102
+Epoch 25 done | train_loss=2.7590 | val_loss=0.2200 | time=129.6s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch25.pt
+Epoch 26 | Step 0 | Loss 2.8406
+Epoch 26 | Step 50 | Loss 2.7211
+Epoch 26 | Step 100 | Loss 2.8416
+Epoch 26 | Step 150 | Loss 2.8150
+Epoch 26 | Step 200 | Loss 2.7546
+Epoch 26 | Step 250 | Loss 2.6676
+Epoch 26 | Step 300 | Loss 2.6587
+Epoch 26 | Step 350 | Loss 2.7227
+Epoch 26 | Step 400 | Loss 2.6859
+Epoch 26 | Step 450 | Loss 2.6689
+Epoch 26 done | train_loss=2.7312 | val_loss=0.2104 | time=129.4s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch26.pt
+Epoch 27 | Step 0 | Loss 2.6529
+Epoch 27 | Step 50 | Loss 2.6713
+Epoch 27 | Step 100 | Loss 2.6673
+Epoch 27 | Step 150 | Loss 2.6835
+Epoch 27 | Step 200 | Loss 2.6107
+Epoch 27 | Step 250 | Loss 2.7274
+Epoch 27 | Step 300 | Loss 2.8494
+Epoch 27 | Step 350 | Loss 2.6877
+Epoch 27 | Step 400 | Loss 2.7419
+Epoch 27 | Step 450 | Loss 2.9758
+Epoch 27 done | train_loss=2.7171 | val_loss=0.2063 | time=129.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch27.pt
+Epoch 28 | Step 0 | Loss 2.7210
+Epoch 28 | Step 50 | Loss 2.6519
+Epoch 28 | Step 100 | Loss 2.6651
+Epoch 28 | Step 150 | Loss 2.6817
+Epoch 28 | Step 200 | Loss 2.6987
+Epoch 28 | Step 250 | Loss 2.6329
+Epoch 28 | Step 300 | Loss 2.6643
+Epoch 28 | Step 350 | Loss 2.7306
+Epoch 28 | Step 400 | Loss 2.6489
+Epoch 28 | Step 450 | Loss 2.6762
+Epoch 28 done | train_loss=2.6907 | val_loss=0.1945 | time=130.3s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch28.pt
+Epoch 29 | Step 0 | Loss 2.7108
+Epoch 29 | Step 50 | Loss 2.7623
+Epoch 29 | Step 100 | Loss 2.6030
+Epoch 29 | Step 150 | Loss 2.5928
+Epoch 29 | Step 200 | Loss 2.6376
+Epoch 29 | Step 250 | Loss 2.7239
+Epoch 29 | Step 300 | Loss 2.6707
+Epoch 29 | Step 350 | Loss 2.6460
+Epoch 29 | Step 400 | Loss 2.6296
+Epoch 29 | Step 450 | Loss 2.7280
+Epoch 29 done | train_loss=2.6903 | val_loss=0.1926 | time=130.2s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch29.pt
+Epoch 30 | Step 0 | Loss 2.6322
+Epoch 30 | Step 50 | Loss 2.5799
+Epoch 30 | Step 100 | Loss 2.7650
+Epoch 30 | Step 150 | Loss 2.7072
+Epoch 30 | Step 200 | Loss 2.6076
+Epoch 30 | Step 250 | Loss 2.6238
+Epoch 30 | Step 300 | Loss 2.6817
+Epoch 30 | Step 350 | Loss 2.6648
+Epoch 30 | Step 400 | Loss 2.7082
+Epoch 30 | Step 450 | Loss 2.6941
+Epoch 30 done | train_loss=2.6661 | val_loss=0.1813 | time=130.2s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch30.pt
+Epoch 31 | Step 0 | Loss 2.6530
+Epoch 31 | Step 50 | Loss 2.6772
+Epoch 31 | Step 100 | Loss 2.6474
+Epoch 31 | Step 150 | Loss 2.6334
+Epoch 31 | Step 200 | Loss 2.6363
+Epoch 31 | Step 250 | Loss 2.6194
+Epoch 31 | Step 300 | Loss 2.6851
+Epoch 31 | Step 350 | Loss 2.5931
+Epoch 31 | Step 400 | Loss 2.5782
+Epoch 31 | Step 450 | Loss 2.6088
+Epoch 31 done | train_loss=2.6316 | val_loss=0.1749 | time=129.2s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch31.pt
+Epoch 32 | Step 0 | Loss 2.6089
+Epoch 32 | Step 50 | Loss 2.6264
+Epoch 32 | Step 100 | Loss 2.6238
+Epoch 32 | Step 150 | Loss 2.6322
+Epoch 32 | Step 200 | Loss 2.5690
+Epoch 32 | Step 250 | Loss 2.5564
+Epoch 32 | Step 300 | Loss 2.6183
+Epoch 32 | Step 350 | Loss 2.6794
+Epoch 32 | Step 400 | Loss 2.6881
+Epoch 32 | Step 450 | Loss 2.6510
+Epoch 32 done | train_loss=2.6314 | val_loss=0.1663 | time=129.4s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch32.pt
+Epoch 33 | Step 0 | Loss 2.6616
+Epoch 33 | Step 50 | Loss 2.6409
+Epoch 33 | Step 100 | Loss 2.6485
+Epoch 33 | Step 150 | Loss 2.5915
+Epoch 33 | Step 200 | Loss 2.5234
+Epoch 33 | Step 250 | Loss 2.6280
+Epoch 33 | Step 300 | Loss 2.6645
+Epoch 33 | Step 350 | Loss 2.6223
+Epoch 33 | Step 400 | Loss 2.6221
+Epoch 33 | Step 450 | Loss 2.6136
+Epoch 33 done | train_loss=2.6118 | val_loss=0.1655 | time=129.0s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch33.pt
+Epoch 34 | Step 0 | Loss 2.5717
+Epoch 34 | Step 50 | Loss 2.5701
+Epoch 34 | Step 100 | Loss 2.5933
+Epoch 34 | Step 150 | Loss 2.6469
+Epoch 34 | Step 200 | Loss 2.5732
+Epoch 34 | Step 250 | Loss 2.5698
+Epoch 34 | Step 300 | Loss 2.6193
+Epoch 34 | Step 350 | Loss 2.5824
+Epoch 34 | Step 400 | Loss 2.6055
+Epoch 34 | Step 450 | Loss 2.5858
+Epoch 34 done | train_loss=2.6114 | val_loss=0.1554 | time=129.4s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch34.pt
+Epoch 35 | Step 0 | Loss 2.5648
+Epoch 35 | Step 50 | Loss 2.5681
+Epoch 35 | Step 100 | Loss 2.6390
+Epoch 35 | Step 150 | Loss 2.5803
+Epoch 35 | Step 200 | Loss 2.5885
+Epoch 35 | Step 250 | Loss 2.5920
+Epoch 35 | Step 300 | Loss 2.5709
+Epoch 35 | Step 350 | Loss 2.5982
+Epoch 35 | Step 400 | Loss 2.5582
+Epoch 35 | Step 450 | Loss 2.5924
+Epoch 35 done | train_loss=2.5990 | val_loss=0.1529 | time=129.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch35.pt
+Epoch 36 | Step 0 | Loss 2.6433
+Epoch 36 | Step 50 | Loss 2.6198
+Epoch 36 | Step 100 | Loss 2.6336
+Epoch 36 | Step 150 | Loss 2.5168
+Epoch 36 | Step 200 | Loss 2.5925
+Epoch 36 | Step 250 | Loss 2.6268
+Epoch 36 | Step 300 | Loss 2.5631
+Epoch 36 | Step 350 | Loss 2.6223
+Epoch 36 | Step 400 | Loss 2.5185
+Epoch 36 | Step 450 | Loss 2.5739
+Epoch 36 done | train_loss=2.5889 | val_loss=0.1495 | time=129.4s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch36.pt
+Epoch 37 | Step 0 | Loss 2.5471
+Epoch 37 | Step 50 | Loss 2.5424
+Epoch 37 | Step 100 | Loss 2.5440
+Epoch 37 | Step 150 | Loss 2.6043
+Epoch 37 | Step 200 | Loss 2.5568
+Epoch 37 | Step 250 | Loss 2.5597
+Epoch 37 | Step 300 | Loss 2.4954
+Epoch 37 | Step 350 | Loss 2.5611
+Epoch 37 | Step 400 | Loss 2.6586
+Epoch 37 | Step 450 | Loss 2.6576
+Epoch 37 done | train_loss=2.5729 | val_loss=0.1436 | time=128.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch37.pt
+Epoch 38 | Step 0 | Loss 2.5711
+Epoch 38 | Step 50 | Loss 2.5544
+Epoch 38 | Step 100 | Loss 2.5609
+Epoch 38 | Step 150 | Loss 2.5465
+Epoch 38 | Step 200 | Loss 2.5242
+Epoch 38 | Step 250 | Loss 2.5540
+Epoch 38 | Step 300 | Loss 2.5656
+Epoch 38 | Step 350 | Loss 2.5997
+Epoch 38 | Step 400 | Loss 2.5257
+Epoch 38 | Step 450 | Loss 2.5232
+Epoch 38 done | train_loss=2.5620 | val_loss=0.1462 | time=129.2s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch38.pt
+Epoch 39 | Step 0 | Loss 2.5476
+Epoch 39 | Step 50 | Loss 2.5961
+Epoch 39 | Step 100 | Loss 2.5307
+Epoch 39 | Step 150 | Loss 2.5349
+Epoch 39 | Step 200 | Loss 2.5414
+Epoch 39 | Step 250 | Loss 2.5971
+Epoch 39 | Step 300 | Loss 2.5272
+Epoch 39 | Step 350 | Loss 2.6446
+Epoch 39 | Step 400 | Loss 2.5319
+Epoch 39 | Step 450 | Loss 2.4782
+Epoch 39 done | train_loss=2.5639 | val_loss=0.1461 | time=129.3s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch39.pt
+Epoch 40 | Step 0 | Loss 2.4890
+Epoch 40 | Step 50 | Loss 2.5474
+Epoch 40 | Step 100 | Loss 2.5591
+Epoch 40 | Step 150 | Loss 2.5355
+Epoch 40 | Step 200 | Loss 2.5351
+Epoch 40 | Step 250 | Loss 2.5943
+Epoch 40 | Step 300 | Loss 2.5676
+Epoch 40 | Step 350 | Loss 2.5908
+Epoch 40 | Step 400 | Loss 2.5734
+Epoch 40 | Step 450 | Loss 2.4975
+Epoch 40 done | train_loss=2.5483 | val_loss=0.1400 | time=130.2s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch40.pt
+Epoch 41 | Step 0 | Loss 2.5212
+Epoch 41 | Step 50 | Loss 2.5491
+Epoch 41 | Step 100 | Loss 2.5067
+Epoch 41 | Step 150 | Loss 2.4925
+Epoch 41 | Step 200 | Loss 2.5287
+Epoch 41 | Step 250 | Loss 2.5933
+Epoch 41 | Step 300 | Loss 2.5443
+Epoch 41 | Step 350 | Loss 2.4834
+Epoch 41 | Step 400 | Loss 2.4779
+Epoch 41 | Step 450 | Loss 2.5715
+Epoch 41 done | train_loss=2.5497 | val_loss=0.1360 | time=129.3s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch41.pt
+Epoch 42 | Step 0 | Loss 2.5167
+Epoch 42 | Step 50 | Loss 2.5310
+Epoch 42 | Step 100 | Loss 2.5277
+Epoch 42 | Step 150 | Loss 2.5513
+Epoch 42 | Step 200 | Loss 2.5411
+Epoch 42 | Step 250 | Loss 2.5055
+Epoch 42 | Step 300 | Loss 2.5039
+Epoch 42 | Step 350 | Loss 2.5158
+Epoch 42 | Step 400 | Loss 2.5256
+Epoch 42 | Step 450 | Loss 2.5329
+Epoch 42 done | train_loss=2.5334 | val_loss=0.1370 | time=129.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch42.pt
+Epoch 43 | Step 0 | Loss 2.5120
+Epoch 43 | Step 50 | Loss 2.5333
+Epoch 43 | Step 100 | Loss 2.6423
+Epoch 43 | Step 150 | Loss 2.4775
+Epoch 43 | Step 200 | Loss 2.5076
+Epoch 43 | Step 250 | Loss 2.5003
+Epoch 43 | Step 300 | Loss 2.5307
+Epoch 43 | Step 350 | Loss 2.5399
+Epoch 43 | Step 400 | Loss 2.5577
+Epoch 43 | Step 450 | Loss 2.4822
+Epoch 43 done | train_loss=2.5278 | val_loss=0.1325 | time=129.6s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch43.pt
+Epoch 44 | Step 0 | Loss 2.5176
+Epoch 44 | Step 50 | Loss 2.5101
+Epoch 44 | Step 100 | Loss 2.4724
+Epoch 44 | Step 150 | Loss 2.4916
+Epoch 44 | Step 200 | Loss 2.4763
+Epoch 44 | Step 250 | Loss 2.4778
+Epoch 44 | Step 300 | Loss 2.4631
+Epoch 44 | Step 350 | Loss 2.5159
+Epoch 44 | Step 400 | Loss 2.4873
+Epoch 44 | Step 450 | Loss 2.4811
+Epoch 44 done | train_loss=2.5169 | val_loss=0.1279 | time=130.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch44.pt
+Epoch 45 | Step 0 | Loss 2.5231
+Epoch 45 | Step 50 | Loss 2.5913
+Epoch 45 | Step 100 | Loss 2.4871
+Epoch 45 | Step 150 | Loss 2.5550
+Epoch 45 | Step 200 | Loss 2.4931
+Epoch 45 | Step 250 | Loss 2.5030
+Epoch 45 | Step 300 | Loss 2.4892
+Epoch 45 | Step 350 | Loss 2.4245
+Epoch 45 | Step 400 | Loss 2.5344
+Epoch 45 | Step 450 | Loss 2.5192
+Epoch 45 done | train_loss=2.5265 | val_loss=0.1286 | time=130.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch45.pt
+Epoch 46 | Step 0 | Loss 2.5163
+Epoch 46 | Step 50 | Loss 2.5110
+Epoch 46 | Step 100 | Loss 2.5223
+Epoch 46 | Step 150 | Loss 2.5280
+Epoch 46 | Step 200 | Loss 2.5067
+Epoch 46 | Step 250 | Loss 2.4977
+Epoch 46 | Step 300 | Loss 2.5115
+Epoch 46 | Step 350 | Loss 2.5353
+Epoch 46 | Step 400 | Loss 2.5315
+Epoch 46 | Step 450 | Loss 2.5143
+Epoch 46 done | train_loss=2.5225 | val_loss=0.1318 | time=129.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch46.pt
+Epoch 47 | Step 0 | Loss 2.4514
+Epoch 47 | Step 50 | Loss 2.4862
+Epoch 47 | Step 100 | Loss 2.4949
+Epoch 47 | Step 150 | Loss 2.4973
+Epoch 47 | Step 200 | Loss 2.4866
+Epoch 47 | Step 250 | Loss 2.4732
+Epoch 47 | Step 300 | Loss 2.4643
+Epoch 47 | Step 350 | Loss 2.4391
+Epoch 47 | Step 400 | Loss 2.5436
+Epoch 47 | Step 450 | Loss 2.4957
+Epoch 47 done | train_loss=2.5028 | val_loss=0.1262 | time=129.3s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch47.pt
+Epoch 48 | Step 0 | Loss 2.4726
+Epoch 48 | Step 50 | Loss 2.5037
+Epoch 48 | Step 100 | Loss 2.4738
+Epoch 48 | Step 150 | Loss 2.4581
+Epoch 48 | Step 200 | Loss 2.4552
+Epoch 48 | Step 250 | Loss 2.5177
+Epoch 48 | Step 300 | Loss 2.4618
+Epoch 48 | Step 350 | Loss 2.4832
+Epoch 48 | Step 400 | Loss 2.5126
+Epoch 48 | Step 450 | Loss 2.4784
+Epoch 48 done | train_loss=2.5133 | val_loss=0.1266 | time=129.4s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch48.pt
+Epoch 49 | Step 0 | Loss 2.4735
+Epoch 49 | Step 50 | Loss 2.5416
+Epoch 49 | Step 100 | Loss 2.5182
+Epoch 49 | Step 150 | Loss 2.5208
+Epoch 49 | Step 200 | Loss 2.4638
+Epoch 49 | Step 250 | Loss 2.4950
+Epoch 49 | Step 300 | Loss 2.5076
+Epoch 49 | Step 350 | Loss 2.4589
+Epoch 49 | Step 400 | Loss 2.4664
+Epoch 49 | Step 450 | Loss 2.5136
+Epoch 49 done | train_loss=2.4929 | val_loss=0.1251 | time=129.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch49.pt
+
+=== TEST RESULTS ===
+  val_loss: 0.1354
+  bit_accuracy: 0.8043
+  seq_accuracy: 0.6000
+  levenshtein: 3.4000
+  bleu: 0.9504
+  rouge1: 0.9652
+  rouge2: 0.9545
+  rougeL: 0.9652

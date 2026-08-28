@@ -155,13 +155,17 @@ class LocalEncoder(nn.Module):
         self,
         x: torch.Tensor,                           # (B, S)  raw byte IDs
         padding_mask: torch.Tensor | None = None,  # (B, 1, 1, S) True=pad
+        src_offset: int = 0,                       # Absolute byte offset
     ) -> torch.Tensor:                             # (B, n_patches, D)
         B, S = x.shape
         device = x.device
 
         # 1. Byte embeddings + positional encoding
+        # Use relative positions (offset=0) for the local encoder — the absolute
+        # context is provided to the global transformer via patch_offset instead.
+        # Using raw src_offset here would exceed pe's max_len for large chunks.
         h = self.byte_emb(x)           # (B, S, D)
-        h = self.pos_enc(h)
+        h = self.pos_enc(h, offset=0)
         h = self.dropout(h)
 
         # 2. Byte-level Transformer layers
@@ -308,7 +312,7 @@ class BLTTransformer(nn.Module):
         # Latent (Global) Transformer — operates on patch sequence
         # Uses ByteLevelTransformerLayer (pre-LN MHA + FFN), same architecture
         # as a standard encoder block. Defined locally to keep blt.py self-contained.
-        self.global_pos_enc = SinusoidalPositionalEncoding(d_model, max_len=max_seq_len // patch_size + 1)
+        self.global_pos_enc = SinusoidalPositionalEncoding(d_model, max_len=8192 // patch_size + 1)
         self.global_blocks = nn.ModuleList([
             ByteLevelTransformerLayer(d_model, n_heads, d_ff, dropout)
             for _ in range(num_layers)
@@ -352,10 +356,12 @@ class BLTTransformer(nn.Module):
     # ------------------------------------------------------------------
 
     def forward(
-        self,
-        src: torch.Tensor,      # (B, S)  cipher byte IDs
-        tgt: torch.Tensor,      # (B, T)  plain  byte IDs (shifted right)
-        pad_idx: int = 0,
+        self, 
+        src: torch.Tensor,          # (B, S_src) cipher bytes
+        tgt: torch.Tensor,          # (B, S_tgt) plain bytes
+        pad_idx_src: int,
+        pad_idx_tgt: int,
+        src_offset: int = 0         # Absolute byte offset for chunking
     ) -> torch.Tensor:          # (B, T, vocab_size)
         """
         Teacher-forced forward pass used during training.
@@ -363,11 +369,14 @@ class BLTTransformer(nn.Module):
         tgt: plain byte sequence shifted right (decoder input, without last token).
         """
         # --- Encoder side ---
-        src_pad_mask = self._make_padding_mask(src, pad_idx)   # (B, 1, 1, S)
-        patches = self.local_encoder(src, padding_mask=src_pad_mask)  # (B, n_patches, D)
+        src_padding_mask = self._make_padding_mask(src, pad_idx_src)
+        # 1. Local Encoder (cipher bytes → patches)
+        # patch_reprs: (B, num_patches, D)
+        patches = self.local_encoder(src, padding_mask=src_padding_mask, src_offset=src_offset)  # (B, n_patches, D)
 
-        # Global Transformer on patches
-        patches = self.global_pos_enc(patches)
+        # 2. Global Transformer (contextualise patches)
+        patch_offset = src_offset // self.patch_size
+        patches = self.global_pos_enc(patches, offset=patch_offset)
         patches = self.dropout(patches)
         for block in self.global_blocks:
             patches = block(patches)               # no mask: patches are fully dense

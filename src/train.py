@@ -239,9 +239,9 @@ class Transformer(nn.Module):
         ).unsqueeze(0).unsqueeze(1)
         return src_mask, tgt_pad_mask | tgt_sub_mask
 
-    def _get_rope(self, src_len, tgt_len, device):
+    def _get_rope(self, src_len, tgt_len, src_offset, device):
         d_k = self.d_model // self.n_heads
-        sin, cos = get_rotary_matrix(max(src_len, tgt_len), d_k, device)
+        sin, cos = get_rotary_matrix(max(src_offset + src_len, tgt_len), d_k, device)
         return sin, cos
 
     def forward(self, src, tgt, pad_idx_src, pad_idx_tgt, src_offset: int = 0):
@@ -255,13 +255,13 @@ class Transformer(nn.Module):
             enc_out = self.pos_enc(enc_out, offset=src_offset)  # absolute offset!
             dec_out = self.pos_enc(dec_out)  # decoder always starts at 0
         else:
-            sin, cos = self._get_rope(src.size(1), tgt.size(1), src.device)
+            sin, cos = self._get_rope(src.size(1), tgt.size(1), src_offset, src.device)
 
         enc_out = self.dropout(enc_out)
         for block in self.encoder_blocks:
             enc_out = block(enc_out, mask=src_mask,
-                            sin=sin[:src.size(1)] if sin is not None else None,
-                            cos=cos[:src.size(1)] if cos is not None else None)
+                            sin=sin[src_offset:src_offset+src.size(1)] if sin is not None else None,
+                            cos=cos[src_offset:src_offset+src.size(1)] if cos is not None else None)
         enc_out = self.final_norm(enc_out)
 
         dec_out = self.dropout(dec_out)
@@ -341,7 +341,7 @@ def forward_pass(model, src, tgt, dataset, is_blt: bool, src_offset: int = 0) ->
     """
     dec_input = tgt[:, :-1]    # shift right: remove last token
     if is_blt:
-        logits = model(src, dec_input, pad_idx=dataset.pad_id_plain)
+        logits = model(src, dec_input, pad_idx_src=dataset.pad_id_cipher, pad_idx_tgt=dataset.pad_id_plain, src_offset=src_offset)
     else:
         logits = model(src, dec_input, dataset.pad_id_cipher, dataset.pad_id_plain,
                        src_offset=src_offset)
@@ -379,12 +379,8 @@ def evaluate(model, loader, dataset, device, is_blt: bool, max_decode_batches: i
 
     with torch.no_grad():
         for batch_idx, batch in enumerate(tqdm(loader, desc="Evaluating", leave=False)):
-            if is_blt:
-                src, tgt = batch[0].to(device), batch[1].to(device)
-                src_offset = 0
-            else:
-                src, tgt, offsets = batch[0].to(device), batch[1].to(device), batch[2]
-                src_offset = int(offsets.min().item())
+            src, tgt, offsets = batch[0].to(device), batch[1].to(device), batch[2]
+            src_offset = int(offsets.min().item())
 
             logits  = forward_pass(raw_model, src, tgt, dataset, is_blt, src_offset=src_offset)
             targets = tgt[:, 1:].contiguous()
@@ -545,7 +541,12 @@ def main():
 
     # ── Dataset & DataLoaders ──────────────────────────────────────────────
     if is_blt:
-        train_ds, val_ds, test_ds = TokenFreeDataset.split(seed=args.seed)
+        train_ds, val_ds, test_ds = TokenFreeDataset.split(
+            max_src_len=args.max_seq_len * 8 + 4,
+            max_tgt_len=args.max_seq_len + 4,
+            chunk_size=args.chunk_size,
+            seed=args.seed
+        )
     else:
         train_ds, val_ds, test_ds = EncryptedDataset.split(
             max_seq_len=args.max_seq_len, chunk_size=args.chunk_size, seed=args.seed
@@ -565,10 +566,8 @@ def main():
         num_workers=2, pin_memory=True,
     )
     # Test loader (no DDP sampler — evaluate on full set on rank 0)
-    # Using only 5 test examples as requested
-    subset_test_ds = Subset(test_ds, range(min(5, len(test_ds))))
     test_loader = DataLoader(
-        subset_test_ds, batch_size=args.batch_size, shuffle=False,
+        test_ds, batch_size=args.batch_size, shuffle=False,
         num_workers=2, pin_memory=True,
     )
 
@@ -580,12 +579,31 @@ def main():
     if dist.is_initialized():
         model = DDP(model, device_ids=[local_rank], find_unused_parameters=False)
 
-    if args.checkpoint_path:
-        checkpoint = torch.load(args.checkpoint_path, map_location=device, weights_only=False)
+    checkpoint_path = args.checkpoint_path
+    if not checkpoint_path and args.eval_only:
+        # Auto-detect the best (highest-epoch) checkpoint for this config,
+        # same glob pattern used by --resume. Checkpoints are only saved when
+        # val_loss improves, so the highest epoch number is the best one.
+        import glob
+        pattern = f"outputs/checkpoint_{args.config}_epoch*.pt"
+        ckpts = sorted(glob.glob(pattern))
+        if ckpts:
+            checkpoint_path = ckpts[-1]
+            if is_main():
+                print(f"[Eval] Auto-detected checkpoint: {checkpoint_path}")
+        elif is_main():
+            print(f"[Eval] No checkpoint found matching '{pattern}'. Pass --checkpoint_path explicitly.")
+
+    if checkpoint_path:
+        checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
         raw_model = model.module if isinstance(model, DDP) else model
-        raw_model.load_state_dict(checkpoint["state_dict"])
+        # Same fix as --resume: drop the old positional-encoding buffer so it
+        # doesn't clash with the current (larger, fixed-size) buffer shape.
+        if "pos_enc.pe" in checkpoint["state_dict"]:
+            del checkpoint["state_dict"]["pos_enc.pe"]
+        raw_model.load_state_dict(checkpoint["state_dict"], strict=False)
         if is_main():
-            print(f"[Checkpoint] Loaded from {args.checkpoint_path}")
+            print(f"[Checkpoint] Loaded from {checkpoint_path}")
 
     if args.eval_only:
         if is_main():
@@ -594,7 +612,7 @@ def main():
                 raw_model, test_loader, test_ds, device, is_blt,
                 max_decode_batches=len(test_loader),
             )
-            print("\n=== EVALUATION RESULTS ===")
+            print(f"\n=== EVALUATION RESULTS ({args.config}, n={len(test_ds)}) ===")
             for k, v in test_metrics.items():
                 print(f"  {k}: {v:.4f}")
             wandb.log({f"test/{k}": v for k, v in test_metrics.items()})
@@ -635,6 +653,13 @@ def main():
     # ── Resume (auto-detect latest checkpoint) ────────────────────────────
     start_epoch = 0
     global_step = 0
+    
+    # Early Stopping state
+    best_val_loss = float('inf')
+    patience_counter = 0
+    patience_limit = 4
+    last_4_checkpoints = []
+
     if args.resume:
         import glob
         pattern = f"outputs/checkpoint_{args.config}_epoch*.pt"
@@ -656,6 +681,20 @@ def main():
                 scheduler.step()
             if is_main():
                 print(f"[Resume] Loaded checkpoint '{latest_ckpt}' → resuming from epoch {start_epoch}")
+                
+            last_4_checkpoints = ckpts[-4:]
+            
+            # Clean up any older stranded checkpoints immediately on resume
+            if len(ckpts) > 4:
+                for old_ckpt in ckpts[:-4]:
+                    if os.path.exists(old_ckpt):
+                        try:
+                            os.remove(old_ckpt)
+                        except OSError:
+                            pass
+
+            if checkpoint.get("val_loss") is not None:
+                best_val_loss = checkpoint["val_loss"]
         else:
             if is_main():
                 print(f"[Resume] No checkpoints found matching '{pattern}' — starting from scratch.")
@@ -670,14 +709,10 @@ def main():
         t0 = time.time()
 
         for step, batch in enumerate(train_loader):
-            if is_blt:
-                src, tgt = batch[0].to(device), batch[1].to(device)
-                src_offset = 0
-            else:
-                src, tgt, offsets = batch[0].to(device), batch[1].to(device), batch[2]
-                # All samples in a batch may have different offsets; we take the min
-                # so the positional encoding is conservative (shifts toward the true start).
-                src_offset = int(offsets.min().item())
+            src, tgt, offsets = batch[0].to(device), batch[1].to(device), batch[2]
+            # All samples in a batch may have different offsets; we take the min
+            # so the positional encoding is conservative (shifts toward the true start).
+            src_offset = int(offsets.min().item())
 
             is_accumulating = (step + 1) % args.grad_accum_steps != 0
 
@@ -741,20 +776,41 @@ def main():
                     log_dict[f"val/{k}"] = v
             wandb.log(log_dict)
 
-            # Save checkpoint
-            ckpt_path = f"outputs/checkpoint_{args.config}_epoch{epoch:02d}.pt"
-            raw_model = model.module if isinstance(model, DDP) else model
-            torch.save(
-                {
-                    "epoch":      epoch,
-                    "config":     args.config,
-                    "state_dict": raw_model.state_dict(),
-                    "optimizer":  optimizer.state_dict(),
-                    "val_loss":   val_metrics.get("val_loss", None),
-                },
-                ckpt_path,
-            )
-            print(f"[Checkpoint] Saved → {ckpt_path}")
+            # Save checkpoint & Early stopping
+            current_val_loss = val_metrics.get("val_loss", float('inf')) if val_metrics else avg_train_loss
+            
+            if current_val_loss < best_val_loss:
+                best_val_loss = current_val_loss
+                patience_counter = 0
+                
+                ckpt_path = f"outputs/checkpoint_{args.config}_epoch{epoch:02d}.pt"
+                raw_model = model.module if isinstance(model, DDP) else model
+                torch.save(
+                    {
+                        "epoch":      epoch,
+                        "config":     args.config,
+                        "state_dict": raw_model.state_dict(),
+                        "optimizer":  optimizer.state_dict(),
+                        "val_loss":   val_metrics.get("val_loss", None),
+                    },
+                    ckpt_path,
+                )
+                print(f"[Checkpoint] Saved → {ckpt_path}")
+                
+                # Keep only last 4 checkpoints
+                last_4_checkpoints.append(ckpt_path)
+                if len(last_4_checkpoints) > 4:
+                    old_ckpt = last_4_checkpoints.pop(0)
+                    if os.path.exists(old_ckpt):
+                        os.remove(old_ckpt)
+            else:
+                patience_counter += 1
+                print(f"[Early Stopping] val_loss didn't improve ({current_val_loss:.4f} >= {best_val_loss:.4f}). Patience: {patience_counter}/{patience_limit}")
+
+        if patience_counter >= patience_limit:
+            if is_main():
+                print(f"Stopping early at epoch {epoch} due to no improvement in val_loss.")
+            break
 
     # ── Final test evaluation (rank 0 only) ───────────────────────────────
     if is_main():

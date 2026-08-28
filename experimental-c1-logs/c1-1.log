@@ -1,0 +1,287 @@
+[Dataset] train=39683 | val=4685 | test=4782
+[Model] Config=C1 | Parameters=13,691,016
+Epoch 0 | Step 0 | Loss 8.6181
+Epoch 0 | Step 50 | Loss 8.6538
+Epoch 0 | Step 100 | Loss 8.5415
+Epoch 0 | Step 150 | Loss 8.5676
+Epoch 0 | Step 200 | Loss 8.3019
+Epoch 0 | Step 250 | Loss 8.1968
+Epoch 0 | Step 300 | Loss 8.1289
+Epoch 0 | Step 350 | Loss 7.9138
+Epoch 0 | Step 400 | Loss 7.9008
+Epoch 0 | Step 450 | Loss 7.9483
+Epoch 0 | Step 500 | Loss 7.8727
+Epoch 0 | Step 550 | Loss 7.7736
+Epoch 0 | Step 600 | Loss 7.6296
+Epoch 0 | Step 650 | Loss 7.6512
+Epoch 0 | Step 700 | Loss 7.5819
+Epoch 0 | Step 750 | Loss 7.5407
+Epoch 0 | Step 800 | Loss 7.5384
+Epoch 0 | Step 850 | Loss 7.2650
+Epoch 0 | Step 900 | Loss 7.2493
+Epoch 0 | Step 950 | Loss 7.4056
+                                                                                                                                                                   
+Epoch 0 done | train_loss=7.9152 | val_loss=6.8990 | time=141.0s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch00.pt
+Epoch 1 | Step 0 | Loss 7.2395
+Epoch 1 | Step 50 | Loss 7.3167
+Epoch 1 | Step 100 | Loss 7.2798
+Epoch 1 | Step 150 | Loss 7.1039
+Epoch 1 | Step 200 | Loss 7.2394
+Epoch 1 | Step 250 | Loss 7.3730
+Epoch 1 | Step 300 | Loss 7.3006
+Epoch 1 | Step 350 | Loss 7.2820
+Epoch 1 | Step 400 | Loss 7.2028
+Epoch 1 | Step 450 | Loss 7.2540
+Epoch 1 | Step 500 | Loss 7.1752
+Epoch 1 | Step 550 | Loss 7.3038
+Epoch 1 | Step 600 | Loss 7.2222
+Epoch 1 | Step 650 | Loss 7.1690
+Epoch 1 | Step 700 | Loss 7.1546
+Epoch 1 | Step 750 | Loss 7.1187
+Epoch 1 | Step 800 | Loss 7.2952
+Epoch 1 | Step 850 | Loss 7.3691
+Epoch 1 | Step 900 | Loss 7.3003
+Epoch 1 | Step 950 | Loss 6.9248
+Epoch 1 done | train_loss=7.2342 | val_loss=6.6686 | time=140.5s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch01.pt
+Epoch 2 | Step 0 | Loss 7.1775
+Epoch 2 | Step 50 | Loss 7.1898
+Epoch 2 | Step 100 | Loss 7.1170
+Epoch 2 | Step 150 | Loss 7.2123
+Epoch 2 | Step 200 | Loss 7.0946
+Epoch 2 | Step 250 | Loss 7.0964
+Epoch 2 | Step 300 | Loss 7.1912
+Epoch 2 | Step 350 | Loss 7.1702
+Epoch 2 | Step 400 | Loss 7.3157
+Epoch 2 | Step 450 | Loss 7.1512
+Epoch 2 | Step 500 | Loss 7.3015
+Epoch 2 | Step 550 | Loss 7.2963
+Epoch 2 | Step 600 | Loss 7.1251
+Epoch 2 | Step 650 | Loss 7.2265
+Epoch 2 | Step 700 | Loss 6.9284
+Epoch 2 | Step 750 | Loss 7.2888
+Epoch 2 | Step 800 | Loss 7.1319
+Epoch 2 | Step 850 | Loss 7.1656
+Epoch 2 | Step 900 | Loss 6.8413
+Epoch 2 | Step 950 | Loss 6.9969
+Epoch 2 done | train_loss=7.1246 | val_loss=6.5161 | time=142.4s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch02.pt
+Epoch 3 | Step 0 | Loss 7.0037
+Epoch 3 | Step 50 | Loss 7.0900
+Epoch 3 | Step 100 | Loss 6.9335
+Epoch 3 | Step 150 | Loss 7.1664
+Epoch 3 | Step 200 | Loss 7.1232
+Epoch 3 | Step 250 | Loss 7.0234
+Epoch 3 | Step 300 | Loss 6.9768
+Epoch 3 | Step 350 | Loss 7.1153
+Epoch 3 | Step 400 | Loss 6.6767
+Epoch 3 | Step 450 | Loss 6.7379
+Epoch 3 | Step 500 | Loss 7.0206
+Epoch 3 | Step 550 | Loss 6.8928
+Epoch 3 | Step 600 | Loss 6.9110
+Epoch 3 | Step 650 | Loss 6.9220
+Epoch 3 | Step 700 | Loss 7.0241
+Epoch 3 | Step 750 | Loss 6.9147
+Epoch 3 | Step 800 | Loss 7.0825
+Epoch 3 | Step 850 | Loss 6.8515
+Epoch 3 | Step 900 | Loss 6.9430
+Epoch 3 | Step 950 | Loss 6.9942
+Epoch 3 done | train_loss=6.9803 | val_loss=6.2493 | time=140.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch03.pt
+Epoch 4 | Step 0 | Loss 6.8157
+Epoch 4 | Step 50 | Loss 6.5644
+Epoch 4 | Step 100 | Loss 6.8539
+Epoch 4 | Step 150 | Loss 6.7170
+Epoch 4 | Step 200 | Loss 6.8859
+Epoch 4 | Step 250 | Loss 6.8274
+Epoch 4 | Step 300 | Loss 6.7825
+Epoch 4 | Step 350 | Loss 6.9986
+Epoch 4 | Step 400 | Loss 6.9533
+Epoch 4 | Step 450 | Loss 6.9622
+Epoch 4 | Step 500 | Loss 6.7024
+Epoch 4 | Step 550 | Loss 6.8579
+Epoch 4 | Step 600 | Loss 6.7535
+Epoch 4 | Step 650 | Loss 6.8636
+Epoch 4 | Step 700 | Loss 6.7260
+Epoch 4 | Step 750 | Loss 6.5708
+Epoch 4 | Step 800 | Loss 6.8635
+Epoch 4 | Step 850 | Loss 6.9806
+Epoch 4 | Step 900 | Loss 6.5757
+Epoch 4 | Step 950 | Loss 6.7739
+Epoch 4 done | train_loss=6.7488 | val_loss=5.7591 | time=140.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch04.pt
+Epoch 5 | Step 0 | Loss 6.6713
+Epoch 5 | Step 50 | Loss 6.5752
+Epoch 5 | Step 100 | Loss 6.7177
+Epoch 5 | Step 150 | Loss 6.6096
+Epoch 5 | Step 200 | Loss 6.6292
+Epoch 5 | Step 250 | Loss 6.6953
+Epoch 5 | Step 300 | Loss 6.6399
+Epoch 5 | Step 350 | Loss 6.2750
+Epoch 5 | Step 400 | Loss 6.5458
+Epoch 5 | Step 450 | Loss 6.5216
+Epoch 5 | Step 500 | Loss 6.4530
+Epoch 5 | Step 550 | Loss 6.3732
+Epoch 5 | Step 600 | Loss 6.5595
+Epoch 5 | Step 650 | Loss 6.5018
+Epoch 5 | Step 700 | Loss 6.4845
+Epoch 5 | Step 750 | Loss 6.5346
+Epoch 5 | Step 800 | Loss 6.2945
+Epoch 5 | Step 850 | Loss 6.5850
+Epoch 5 | Step 900 | Loss 6.2556
+Epoch 5 | Step 950 | Loss 6.2757
+Epoch 5 done | train_loss=6.4437 | val_loss=5.2275 | time=142.0s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch05.pt
+Epoch 6 | Step 0 | Loss 6.3258
+Epoch 6 | Step 50 | Loss 6.2374
+Epoch 6 | Step 100 | Loss 6.2454
+Epoch 6 | Step 150 | Loss 6.2628
+Epoch 6 | Step 200 | Loss 6.3254
+Epoch 6 | Step 250 | Loss 6.2229
+Epoch 6 | Step 300 | Loss 6.1421
+Epoch 6 | Step 350 | Loss 5.9479
+Epoch 6 | Step 400 | Loss 6.0308
+Epoch 6 | Step 450 | Loss 6.1630
+Epoch 6 | Step 500 | Loss 6.0574
+Epoch 6 | Step 550 | Loss 5.9460
+Epoch 6 | Step 600 | Loss 6.2230
+Epoch 6 | Step 650 | Loss 6.1912
+Epoch 6 | Step 700 | Loss 6.6845
+Epoch 6 | Step 750 | Loss 6.2384
+Epoch 6 | Step 800 | Loss 6.2344
+Epoch 6 | Step 850 | Loss 5.9071
+Epoch 6 | Step 900 | Loss 6.0286
+Epoch 6 | Step 950 | Loss 5.9190
+Epoch 6 done | train_loss=6.1633 | val_loss=5.1531 | time=141.0s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch06.pt
+Epoch 7 | Step 0 | Loss 6.1122
+Epoch 7 | Step 50 | Loss 6.0663
+Epoch 7 | Step 100 | Loss 5.9191
+Epoch 7 | Step 150 | Loss 5.9711
+Epoch 7 | Step 200 | Loss 6.0385
+Epoch 7 | Step 250 | Loss 5.8547
+Epoch 7 | Step 300 | Loss 5.8502
+Epoch 7 | Step 350 | Loss 6.0971
+Epoch 7 | Step 400 | Loss 5.9159
+Epoch 7 | Step 450 | Loss 5.9590
+Epoch 7 | Step 500 | Loss 5.7980
+Epoch 7 | Step 550 | Loss 5.7520
+Epoch 7 | Step 600 | Loss 5.5176
+Epoch 7 | Step 650 | Loss 5.7918
+Epoch 7 | Step 700 | Loss 6.2657
+Epoch 7 | Step 750 | Loss 5.8993
+Epoch 7 | Step 800 | Loss 6.4334
+Epoch 7 | Step 850 | Loss 5.6302
+Epoch 7 | Step 900 | Loss 5.8946
+Epoch 7 | Step 950 | Loss 6.1025
+Epoch 7 done | train_loss=5.9085 | val_loss=4.3086 | time=141.0s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch07.pt
+Epoch 8 | Step 0 | Loss 5.8697
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home2/yash.more/anlp/a1/src/train.py", line 789, in <module>
+    main()
+  File "/home2/yash.more/anlp/a1/src/train.py", line 683, in main
+    logits = forward_pass(model, src, tgt, train_ds, is_blt, src_offset=src_offset)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/anlp/a1/src/train.py", line 346, in forward_pass
+    logits = model(src, dec_input, dataset.pad_id_cipher, dataset.pad_id_plain,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+    else self._run_ddp_forward(*inputs, **kwargs)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+    return self.module(*inputs, **kwargs)  # type: ignore[index]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/anlp/a1/src/train.py", line 269, in forward
+    dec_out = block(dec_out, enc_out, src_mask=src_mask, tgt_mask=tgt_mask,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/anlp/a1/src/train.py", line 171, in forward
+    x = x + self.dropout(self.feed_forward(self.norm3(x)))
+                                           ^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home2/yash.more/anlp/a1/src/models/norm.py", line 20, in forward
+    return self.gamma * x_norm + self.beta
+           ^^^^^^^^^^
+  File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1915, in __getattr__
+    def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+
+KeyboardInterrupt
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0]:   File "/home2/yash.more/anlp/a1/src/train.py", line 789, in <module>
+[rank0]:     main()
+[rank0]:   File "/home2/yash.more/anlp/a1/src/train.py", line 683, in main
+[rank0]:     logits = forward_pass(model, src, tgt, train_ds, is_blt, src_offset=src_offset)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/anlp/a1/src/train.py", line 346, in forward_pass
+[rank0]:     logits = model(src, dec_input, dataset.pad_id_cipher, dataset.pad_id_plain,
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+[rank0]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank0]:          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+[rank0]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/anlp/a1/src/train.py", line 269, in forward
+[rank0]:     dec_out = block(dec_out, enc_out, src_mask=src_mask, tgt_mask=tgt_mask,
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/anlp/a1/src/train.py", line 171, in forward
+[rank0]:     x = x + self.dropout(self.feed_forward(self.norm3(x)))
+[rank0]:                                            ^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/anlp/a1/src/models/norm.py", line 20, in forward
+[rank0]:     return self.gamma * x_norm + self.beta
+[rank0]:            ^^^^^^^^^^
+[rank0]:   File "/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1915, in __getattr__
+[rank0]:     def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+
+[rank0]: KeyboardInterrupt
