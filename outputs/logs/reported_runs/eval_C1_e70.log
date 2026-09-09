@@ -1,0 +1,12 @@
+[Data] C1 test: 4782 windows spanning 500 lines
+
+
+=== C1: full-line test metrics (n=500) ===
+  char_accuracy  0.2912
+  seq_accuracy   0.0220
+  levenshtein    18.5380
+  bleu           0.7766
+  rouge1         0.9018
+  rouge2         0.8200
+  rougeL         0.9015
+[Eval] Wrote outputs/final_eval_C1.json, a 50-example dump, and outputs/predictions_full_C1.jsonl (500 pairs).

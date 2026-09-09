@@ -1,0 +1,12 @@
+{
+  "config": "C3",
+  "checkpoint": "outputs/checkpoint_C3_epoch41.pt",
+  "n_lines": 500,
+  "char_accuracy": 0.07039328203467826,
+  "seq_accuracy": 0.0,
+  "levenshtein": 423.214,
+  "bleu": 0.0208615002236132,
+  "rouge1": 0.28247155604728474,
+  "rouge2": 0.06030399782378846,
+  "rougeL": 0.22919488977666502
+}

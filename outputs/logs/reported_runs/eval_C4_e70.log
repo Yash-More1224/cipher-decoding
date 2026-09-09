@@ -1,0 +1,12 @@
+[Data] C4 test: 4782 windows spanning 500 lines
+
+
+=== C4: full-line test metrics (n=500) ===
+  char_accuracy  0.2979
+  seq_accuracy   0.0180
+  levenshtein    17.1780
+  bleu           0.7859
+  rouge1         0.9067
+  rouge2         0.8274
+  rougeL         0.9065
+[Eval] Wrote outputs/final_eval_C4.json, a 50-example dump, and outputs/predictions_full_C4.jsonl (500 pairs).

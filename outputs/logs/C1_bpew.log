@@ -1,0 +1,660 @@
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home2/yash.more/.netrc.
+wandb: Currently logged in as: yash-more1224 (yash-more1224-international-institute-of-information-tec) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run fbzrj6zs
+wandb: Tracking run with wandb version 0.28.2
+wandb: Run data is saved locally in /home2/yash.more/anlp/a1/wandb/run-20260828_193847-fbzrj6zs
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run run-C1-bpew
+wandb: ⭐️ View project at https://wandb.ai/yash-more1224-international-institute-of-information-tec/anlp-assignment-1
+wandb: 🚀 View run at https://wandb.ai/yash-more1224-international-institute-of-information-tec/anlp-assignment-1/runs/fbzrj6zs
+[Batching] token budget 4096/batch -> 648 train batches/epoch
+[Dataset] train=39683 | val=4685 | test=4782
+[Model] Config=C1 | Parameters=10,986,888
+Epoch 0 | Step 0 | Loss 8.7398
+Epoch 0 | Step 50 | Loss 8.4181
+Epoch 0 | Step 100 | Loss 7.8765
+Epoch 0 | Step 150 | Loss 7.3436
+Epoch 0 | Step 200 | Loss 6.9611
+Epoch 0 | Step 250 | Loss 6.5378
+Epoch 0 | Step 300 | Loss 6.4964
+Epoch 0 | Step 350 | Loss 6.2688
+Epoch 0 | Step 400 | Loss 6.3413
+Epoch 0 | Step 450 | Loss 6.2928
+Epoch 0 | Step 500 | Loss 6.2398
+Epoch 0 | Step 550 | Loss 6.3124
+Epoch 0 | Step 600 | Loss 6.0241
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<01:07,  1.46it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:55,  1.74it/s]Evaluating:   9%|▉         | 9/99 [00:01<00:08, 10.33it/s]Evaluating:  16%|█▌        | 16/99 [00:01<00:04, 19.20it/s]Evaluating:  23%|██▎       | 23/99 [00:01<00:02, 27.83it/s]Evaluating:  30%|███       | 30/99 [00:01<00:01, 35.94it/s]Evaluating:  37%|███▋      | 37/99 [00:01<00:01, 43.05it/s]Evaluating:  44%|████▍     | 44/99 [00:01<00:01, 48.97it/s]Evaluating:  52%|█████▏    | 51/99 [00:01<00:00, 53.74it/s]Evaluating:  59%|█████▊    | 58/99 [00:02<00:00, 57.23it/s]Evaluating:  66%|██████▌   | 65/99 [00:02<00:00, 60.13it/s]Evaluating:  73%|███████▎  | 72/99 [00:02<00:00, 62.40it/s]Evaluating:  80%|███████▉  | 79/99 [00:02<00:00, 64.36it/s]Evaluating:  87%|████████▋ | 86/99 [00:02<00:00, 65.95it/s]Evaluating:  95%|█████████▍| 94/99 [00:02<00:00, 68.37it/s]                                                           Epoch 0 done | train_loss=6.7984 | val_loss=5.1056 | time=47.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch00.pt
+Epoch 1 | Step 0 | Loss 6.1127
+Epoch 1 | Step 50 | Loss 6.1093
+Epoch 1 | Step 100 | Loss 6.0813
+Epoch 1 | Step 150 | Loss 5.9355
+Epoch 1 | Step 200 | Loss 6.0316
+Epoch 1 | Step 250 | Loss 6.2267
+Epoch 1 | Step 300 | Loss 5.8489
+Epoch 1 | Step 350 | Loss 6.2721
+Epoch 1 | Step 400 | Loss 5.8813
+Epoch 1 | Step 450 | Loss 5.8666
+Epoch 1 | Step 500 | Loss 5.9968
+Epoch 1 | Step 550 | Loss 5.7874
+Epoch 1 | Step 600 | Loss 5.8367
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.97it/s]Evaluating:   6%|▌         | 6/99 [00:00<00:03, 28.30it/s]Evaluating:  12%|█▏        | 12/99 [00:00<00:02, 41.03it/s]Evaluating:  18%|█▊        | 18/99 [00:00<00:01, 47.24it/s]Evaluating:  24%|██▍       | 24/99 [00:00<00:01, 51.13it/s]Evaluating:  30%|███       | 30/99 [00:00<00:01, 53.74it/s]Evaluating:  36%|███▋      | 36/99 [00:00<00:01, 55.46it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:01, 56.51it/s]Evaluating:  48%|████▊     | 48/99 [00:00<00:00, 57.33it/s]Evaluating:  55%|█████▍    | 54/99 [00:01<00:00, 57.93it/s]Evaluating:  62%|██████▏   | 61/99 [00:01<00:00, 60.89it/s]Evaluating:  69%|██████▊   | 68/99 [00:01<00:00, 63.36it/s]Evaluating:  76%|███████▌  | 75/99 [00:01<00:00, 65.20it/s]Evaluating:  83%|████████▎ | 82/99 [00:01<00:00, 66.58it/s]Evaluating:  91%|█████████ | 90/99 [00:01<00:00, 68.56it/s]Evaluating: 100%|██████████| 99/99 [00:01<00:00, 72.62it/s]                                                           Epoch 1 done | train_loss=5.9475 | val_loss=4.7278 | time=45.6s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch01.pt
+Epoch 2 | Step 0 | Loss 5.7086
+Epoch 2 | Step 50 | Loss 5.8179
+Epoch 2 | Step 100 | Loss 5.8346
+Epoch 2 | Step 150 | Loss 5.7542
+Epoch 2 | Step 200 | Loss 5.7709
+Epoch 2 | Step 250 | Loss 6.0167
+Epoch 2 | Step 300 | Loss 5.7639
+Epoch 2 | Step 350 | Loss 5.7712
+Epoch 2 | Step 400 | Loss 5.6348
+Epoch 2 | Step 450 | Loss 5.5534
+Epoch 2 | Step 500 | Loss 5.5781
+Epoch 2 | Step 550 | Loss 5.5546
+Epoch 2 | Step 600 | Loss 5.4550
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:15,  6.47it/s]Evaluating:   6%|▌         | 6/99 [00:00<00:03, 27.01it/s]Evaluating:  12%|█▏        | 12/99 [00:00<00:02, 40.26it/s]Evaluating:  18%|█▊        | 18/99 [00:00<00:01, 47.43it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 52.34it/s]Evaluating:  32%|███▏      | 32/99 [00:00<00:01, 55.14it/s]Evaluating:  38%|███▊      | 38/99 [00:00<00:01, 56.42it/s]Evaluating:  45%|████▌     | 45/99 [00:00<00:00, 57.77it/s]Evaluating:  53%|█████▎    | 52/99 [00:01<00:00, 58.66it/s]Evaluating:  60%|█████▉    | 59/99 [00:01<00:00, 59.68it/s]Evaluating:  67%|██████▋   | 66/99 [00:01<00:00, 62.52it/s]Evaluating:  74%|███████▎  | 73/99 [00:01<00:00, 63.64it/s]Evaluating:  82%|████████▏ | 81/99 [00:01<00:00, 65.71it/s]Evaluating:  90%|████████▉ | 89/99 [00:01<00:00, 67.80it/s]Evaluating:  98%|█████████▊| 97/99 [00:01<00:00, 70.61it/s]                                                           Epoch 2 done | train_loss=5.7180 | val_loss=4.4341 | time=46.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch02.pt
+/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:243: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+Epoch 3 | Step 0 | Loss 5.5365
+Epoch 3 | Step 50 | Loss 5.4475
+Epoch 3 | Step 100 | Loss 5.5441
+Epoch 3 | Step 150 | Loss 5.4449
+Epoch 3 | Step 200 | Loss 5.5754
+Epoch 3 | Step 250 | Loss 4.8267
+Epoch 3 | Step 300 | Loss 5.3621
+Epoch 3 | Step 350 | Loss 5.3331
+Epoch 3 | Step 400 | Loss 5.4179
+Epoch 3 | Step 450 | Loss 5.5792
+Epoch 3 | Step 500 | Loss 5.4088
+Epoch 3 | Step 550 | Loss 5.4466
+Epoch 3 | Step 600 | Loss 5.3609
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:13,  7.21it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 31.38it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:02, 42.38it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 48.61it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 52.34it/s]Evaluating:  31%|███▏      | 31/99 [00:00<00:01, 54.79it/s]Evaluating:  37%|███▋      | 37/99 [00:00<00:01, 56.37it/s]Evaluating:  43%|████▎     | 43/99 [00:00<00:00, 57.30it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 58.02it/s]Evaluating:  56%|█████▌    | 55/99 [00:01<00:00, 58.60it/s]Evaluating:  63%|██████▎   | 62/99 [00:01<00:00, 61.24it/s]Evaluating:  70%|██████▉   | 69/99 [00:01<00:00, 63.74it/s]Evaluating:  77%|███████▋  | 76/99 [00:01<00:00, 65.57it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 67.76it/s]Evaluating:  93%|█████████▎| 92/99 [00:01<00:00, 69.74it/s]                                                           Epoch 3 done | train_loss=5.4929 | val_loss=4.1181 | time=45.2s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch03.pt
+Epoch 4 | Step 0 | Loss 5.4392
+Epoch 4 | Step 50 | Loss 5.4405
+Epoch 4 | Step 100 | Loss 5.3756
+Epoch 4 | Step 150 | Loss 5.2805
+Epoch 4 | Step 200 | Loss 5.6252
+Epoch 4 | Step 250 | Loss 5.2974
+Epoch 4 | Step 300 | Loss 5.4656
+Epoch 4 | Step 350 | Loss 4.6736
+Epoch 4 | Step 400 | Loss 5.4065
+Epoch 4 | Step 450 | Loss 5.2076
+Epoch 4 | Step 500 | Loss 5.1661
+Epoch 4 | Step 550 | Loss 5.3859
+Epoch 4 | Step 600 | Loss 5.2081
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:15,  6.47it/s]Evaluating:   6%|▌         | 6/99 [00:00<00:03, 26.53it/s]Evaluating:  12%|█▏        | 12/99 [00:00<00:02, 37.27it/s]Evaluating:  18%|█▊        | 18/99 [00:00<00:01, 42.72it/s]Evaluating:  24%|██▍       | 24/99 [00:00<00:01, 46.03it/s]Evaluating:  30%|███       | 30/99 [00:00<00:01, 48.74it/s]Evaluating:  36%|███▋      | 36/99 [00:00<00:01, 50.60it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:01, 51.96it/s]Evaluating:  48%|████▊     | 48/99 [00:01<00:00, 52.88it/s]Evaluating:  55%|█████▍    | 54/99 [00:01<00:00, 53.58it/s]Evaluating:  61%|██████    | 60/99 [00:01<00:00, 54.01it/s]Evaluating:  67%|██████▋   | 66/99 [00:01<00:00, 54.29it/s]Evaluating:  73%|███████▎  | 72/99 [00:01<00:00, 54.52it/s]Evaluating:  79%|███████▉  | 78/99 [00:01<00:00, 54.76it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 55.20it/s]Evaluating:  91%|█████████ | 90/99 [00:01<00:00, 55.84it/s]Evaluating:  98%|█████████▊| 97/99 [00:01<00:00, 57.75it/s]                                                           Epoch 4 done | train_loss=5.3047 | val_loss=3.8588 | time=54.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch04.pt
+Epoch 5 | Step 0 | Loss 5.2865
+Epoch 5 | Step 50 | Loss 5.2386
+Epoch 5 | Step 100 | Loss 5.3743
+Epoch 5 | Step 150 | Loss 5.0643
+Epoch 5 | Step 200 | Loss 5.3110
+Epoch 5 | Step 250 | Loss 5.1679
+Epoch 5 | Step 300 | Loss 5.0381
+Epoch 5 | Step 350 | Loss 5.2522
+Epoch 5 | Step 400 | Loss 5.2050
+Epoch 5 | Step 450 | Loss 5.1152
+Epoch 5 | Step 500 | Loss 4.9302
+Epoch 5 | Step 550 | Loss 4.9529
+Epoch 5 | Step 600 | Loss 5.3799
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<01:03,  1.54it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:58,  1.67it/s]Evaluating:   8%|▊         | 8/99 [00:01<00:10,  8.75it/s]Evaluating:  14%|█▍        | 14/99 [00:01<00:05, 16.10it/s]Evaluating:  20%|██        | 20/99 [00:01<00:03, 23.33it/s]Evaluating:  26%|██▋       | 26/99 [00:01<00:02, 29.95it/s]Evaluating:  32%|███▏      | 32/99 [00:01<00:01, 35.66it/s]Evaluating:  38%|███▊      | 38/99 [00:01<00:01, 40.43it/s]Evaluating:  44%|████▍     | 44/99 [00:01<00:01, 44.23it/s]Evaluating:  51%|█████     | 50/99 [00:02<00:01, 47.11it/s]Evaluating:  57%|█████▋    | 56/99 [00:02<00:00, 49.32it/s]Evaluating:  63%|██████▎   | 62/99 [00:02<00:00, 50.87it/s]Evaluating:  69%|██████▊   | 68/99 [00:02<00:00, 52.03it/s]Evaluating:  75%|███████▍  | 74/99 [00:02<00:00, 53.04it/s]Evaluating:  81%|████████  | 80/99 [00:02<00:00, 53.82it/s]Evaluating:  87%|████████▋ | 86/99 [00:02<00:00, 54.89it/s]Evaluating:  93%|█████████▎| 92/99 [00:02<00:00, 56.00it/s]Evaluating: 100%|██████████| 99/99 [00:02<00:00, 58.59it/s]                                                           Epoch 5 done | train_loss=5.1443 | val_loss=3.6623 | time=49.0s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch05.pt
+Epoch 6 | Step 0 | Loss 4.9923
+Epoch 6 | Step 50 | Loss 5.2355
+Epoch 6 | Step 100 | Loss 5.0082
+Epoch 6 | Step 150 | Loss 4.8431
+Epoch 6 | Step 200 | Loss 5.0735
+Epoch 6 | Step 250 | Loss 5.2523
+Epoch 6 | Step 300 | Loss 5.1962
+Epoch 6 | Step 350 | Loss 4.7771
+Epoch 6 | Step 400 | Loss 4.9301
+Epoch 6 | Step 450 | Loss 4.7203
+Epoch 6 | Step 500 | Loss 4.5260
+Epoch 6 | Step 550 | Loss 5.0669
+Epoch 6 | Step 600 | Loss 4.9259
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:12,  7.71it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 33.97it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 44.88it/s]Evaluating:  20%|██        | 20/99 [00:00<00:01, 51.41it/s]Evaluating:  27%|██▋       | 27/99 [00:00<00:01, 55.01it/s]Evaluating:  34%|███▍      | 34/99 [00:00<00:01, 57.14it/s]Evaluating:  41%|████▏     | 41/99 [00:00<00:00, 58.49it/s]Evaluating:  48%|████▊     | 48/99 [00:00<00:00, 59.34it/s]Evaluating:  56%|█████▌    | 55/99 [00:01<00:00, 61.27it/s]Evaluating:  63%|██████▎   | 62/99 [00:01<00:00, 63.25it/s]Evaluating:  70%|██████▉   | 69/99 [00:01<00:00, 65.17it/s]Evaluating:  78%|███████▊  | 77/99 [00:01<00:00, 67.25it/s]Evaluating:  86%|████████▌ | 85/99 [00:01<00:00, 69.27it/s]Evaluating:  94%|█████████▍| 93/99 [00:01<00:00, 71.68it/s]                                                           Epoch 6 done | train_loss=5.0002 | val_loss=3.4125 | time=44.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch06.pt
+Epoch 7 | Step 0 | Loss 5.1570
+Epoch 7 | Step 50 | Loss 4.8926
+Epoch 7 | Step 100 | Loss 4.9337
+Epoch 7 | Step 150 | Loss 5.0955
+Epoch 7 | Step 200 | Loss 5.0933
+Epoch 7 | Step 250 | Loss 4.9039
+Epoch 7 | Step 300 | Loss 4.9099
+Epoch 7 | Step 350 | Loss 5.0930
+Epoch 7 | Step 400 | Loss 4.6797
+Epoch 7 | Step 450 | Loss 4.8214
+Epoch 7 | Step 500 | Loss 4.8595
+Epoch 7 | Step 550 | Loss 4.7455
+Epoch 7 | Step 600 | Loss 4.8109
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:19,  4.95it/s]Evaluating:   6%|▌         | 6/99 [00:00<00:03, 23.38it/s]Evaluating:  12%|█▏        | 12/99 [00:00<00:02, 36.87it/s]Evaluating:  18%|█▊        | 18/99 [00:00<00:01, 44.75it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 50.46it/s]Evaluating:  32%|███▏      | 32/99 [00:00<00:01, 54.04it/s]Evaluating:  39%|███▉      | 39/99 [00:00<00:01, 56.40it/s]Evaluating:  46%|████▋     | 46/99 [00:00<00:00, 57.75it/s]Evaluating:  54%|█████▎    | 53/99 [00:01<00:00, 58.78it/s]Evaluating:  61%|██████    | 60/99 [00:01<00:00, 60.88it/s]Evaluating:  68%|██████▊   | 67/99 [00:01<00:00, 63.24it/s]Evaluating:  76%|███████▌  | 75/99 [00:01<00:00, 65.54it/s]Evaluating:  84%|████████▍ | 83/99 [00:01<00:00, 67.33it/s]Evaluating:  92%|█████████▏| 91/99 [00:01<00:00, 69.16it/s]                                                           Epoch 7 done | train_loss=4.8640 | val_loss=3.2298 | time=45.3s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch07.pt
+Epoch 8 | Step 0 | Loss 5.0772
+Epoch 8 | Step 50 | Loss 4.9367
+Epoch 8 | Step 100 | Loss 4.5551
+Epoch 8 | Step 150 | Loss 4.7537
+Epoch 8 | Step 200 | Loss 3.9247
+Epoch 8 | Step 250 | Loss 4.9589
+Epoch 8 | Step 300 | Loss 4.6973
+Epoch 8 | Step 350 | Loss 4.9035
+Epoch 8 | Step 400 | Loss 4.6295
+Epoch 8 | Step 450 | Loss 4.7866
+Epoch 8 | Step 500 | Loss 4.5903
+Epoch 8 | Step 550 | Loss 4.8333
+Epoch 8 | Step 600 | Loss 4.6954
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.76it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 32.56it/s]Evaluating:  14%|█▍        | 14/99 [00:00<00:01, 44.95it/s]Evaluating:  20%|██        | 20/99 [00:00<00:01, 50.16it/s]Evaluating:  27%|██▋       | 27/99 [00:00<00:01, 53.91it/s]Evaluating:  34%|███▍      | 34/99 [00:00<00:01, 56.18it/s]Evaluating:  41%|████▏     | 41/99 [00:00<00:01, 57.53it/s]Evaluating:  48%|████▊     | 48/99 [00:00<00:00, 59.11it/s]Evaluating:  57%|█████▋    | 56/99 [00:01<00:00, 63.30it/s]Evaluating:  65%|██████▍   | 64/99 [00:01<00:00, 65.84it/s]Evaluating:  73%|███████▎  | 72/99 [00:01<00:00, 68.07it/s]Evaluating:  81%|████████  | 80/99 [00:01<00:00, 69.64it/s]Evaluating:  89%|████████▉ | 88/99 [00:01<00:00, 71.52it/s]Evaluating:  98%|█████████▊| 97/99 [00:01<00:00, 74.73it/s]                                                           Epoch 8 done | train_loss=4.7402 | val_loss=3.0364 | time=44.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch08.pt
+Epoch 9 | Step 0 | Loss 4.5702
+Epoch 9 | Step 50 | Loss 4.5428
+Epoch 9 | Step 100 | Loss 4.6066
+Epoch 9 | Step 150 | Loss 4.5970
+Epoch 9 | Step 200 | Loss 4.7169
+Epoch 9 | Step 250 | Loss 4.5412
+Epoch 9 | Step 300 | Loss 4.9970
+Epoch 9 | Step 350 | Loss 4.2381
+Epoch 9 | Step 400 | Loss 4.6630
+Epoch 9 | Step 450 | Loss 4.7982
+Epoch 9 | Step 500 | Loss 4.5134
+Epoch 9 | Step 550 | Loss 4.5200
+Epoch 9 | Step 600 | Loss 4.3956
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:12,  7.64it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 34.61it/s]Evaluating:  14%|█▍        | 14/99 [00:00<00:01, 46.48it/s]Evaluating:  21%|██        | 21/99 [00:00<00:01, 52.08it/s]Evaluating:  28%|██▊       | 28/99 [00:00<00:01, 55.44it/s]Evaluating:  35%|███▌      | 35/99 [00:00<00:01, 57.28it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:00, 58.33it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 59.63it/s]Evaluating:  57%|█████▋    | 56/99 [00:01<00:00, 62.41it/s]Evaluating:  64%|██████▎   | 63/99 [00:01<00:00, 64.25it/s]Evaluating:  71%|███████   | 70/99 [00:01<00:00, 65.80it/s]Evaluating:  79%|███████▉  | 78/99 [00:01<00:00, 67.13it/s]Evaluating:  87%|████████▋ | 86/99 [00:01<00:00, 68.60it/s]Evaluating:  95%|█████████▍| 94/99 [00:01<00:00, 70.21it/s]                                                           Epoch 9 done | train_loss=4.6254 | val_loss=2.8475 | time=44.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch09.pt
+Epoch 10 | Step 0 | Loss 4.8353
+Epoch 10 | Step 50 | Loss 4.5889
+Epoch 10 | Step 100 | Loss 4.2935
+Epoch 10 | Step 150 | Loss 4.3203
+Epoch 10 | Step 200 | Loss 4.5102
+Epoch 10 | Step 250 | Loss 4.9123
+Epoch 10 | Step 300 | Loss 4.5933
+Epoch 10 | Step 350 | Loss 4.8385
+Epoch 10 | Step 400 | Loss 4.7385
+Epoch 10 | Step 450 | Loss 4.4170
+Epoch 10 | Step 500 | Loss 4.7122
+Epoch 10 | Step 550 | Loss 4.6431
+Epoch 10 | Step 600 | Loss 4.8210
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<01:02,  1.56it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:54,  1.78it/s]Evaluating:   9%|▉         | 9/99 [00:01<00:08, 10.61it/s]Evaluating:  16%|█▌        | 16/99 [00:01<00:04, 19.74it/s]Evaluating:  23%|██▎       | 23/99 [00:01<00:02, 28.69it/s]Evaluating:  30%|███       | 30/99 [00:01<00:01, 36.92it/s]Evaluating:  37%|███▋      | 37/99 [00:01<00:01, 44.03it/s]Evaluating:  44%|████▍     | 44/99 [00:01<00:01, 50.04it/s]Evaluating:  52%|█████▏    | 51/99 [00:01<00:00, 54.84it/s]Evaluating:  59%|█████▊    | 58/99 [00:01<00:00, 58.68it/s]Evaluating:  66%|██████▌   | 65/99 [00:02<00:00, 61.75it/s]Evaluating:  73%|███████▎  | 72/99 [00:02<00:00, 63.94it/s]Evaluating:  80%|███████▉  | 79/99 [00:02<00:00, 65.31it/s]Evaluating:  87%|████████▋ | 86/99 [00:02<00:00, 66.56it/s]Evaluating:  95%|█████████▍| 94/99 [00:02<00:00, 68.93it/s]                                                           Epoch 10 done | train_loss=4.5186 | val_loss=2.6953 | time=45.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch10.pt
+Epoch 11 | Step 0 | Loss 4.4118
+Epoch 11 | Step 50 | Loss 4.3033
+Epoch 11 | Step 100 | Loss 4.5003
+Epoch 11 | Step 150 | Loss 4.4166
+Epoch 11 | Step 200 | Loss 4.4845
+Epoch 11 | Step 250 | Loss 4.1950
+Epoch 11 | Step 300 | Loss 4.2702
+Epoch 11 | Step 350 | Loss 4.3380
+Epoch 11 | Step 400 | Loss 4.4630
+Epoch 11 | Step 450 | Loss 4.4204
+Epoch 11 | Step 500 | Loss 4.1377
+Epoch 11 | Step 550 | Loss 4.2996
+Epoch 11 | Step 600 | Loss 4.5988
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.71it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 30.76it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:02, 42.27it/s]Evaluating:  20%|██        | 20/99 [00:00<00:01, 49.38it/s]Evaluating:  27%|██▋       | 27/99 [00:00<00:01, 53.57it/s]Evaluating:  34%|███▍      | 34/99 [00:00<00:01, 56.01it/s]Evaluating:  41%|████▏     | 41/99 [00:00<00:00, 59.05it/s]Evaluating:  48%|████▊     | 48/99 [00:00<00:00, 61.81it/s]Evaluating:  56%|█████▌    | 55/99 [00:01<00:00, 63.95it/s]Evaluating:  63%|██████▎   | 62/99 [00:01<00:00, 65.44it/s]Evaluating:  70%|██████▉   | 69/99 [00:01<00:00, 66.64it/s]Evaluating:  77%|███████▋  | 76/99 [00:01<00:00, 67.49it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 68.50it/s]Evaluating:  93%|█████████▎| 92/99 [00:01<00:00, 69.96it/s]                                                           Epoch 11 done | train_loss=4.4199 | val_loss=2.5292 | time=45.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch11.pt
+Epoch 12 | Step 0 | Loss 4.2257
+Epoch 12 | Step 50 | Loss 4.5225
+Epoch 12 | Step 100 | Loss 4.3858
+Epoch 12 | Step 150 | Loss 4.4751
+Epoch 12 | Step 200 | Loss 4.6730
+Epoch 12 | Step 250 | Loss 4.1395
+Epoch 12 | Step 300 | Loss 4.3398
+Epoch 12 | Step 350 | Loss 4.5382
+Epoch 12 | Step 400 | Loss 4.4091
+Epoch 12 | Step 450 | Loss 4.6910
+Epoch 12 | Step 500 | Loss 4.3081
+Epoch 12 | Step 550 | Loss 4.0871
+Epoch 12 | Step 600 | Loss 4.3867
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.63it/s]Evaluating:   6%|▌         | 6/99 [00:00<00:03, 26.94it/s]Evaluating:  12%|█▏        | 12/99 [00:00<00:02, 39.94it/s]Evaluating:  18%|█▊        | 18/99 [00:00<00:01, 47.19it/s]Evaluating:  24%|██▍       | 24/99 [00:00<00:01, 51.41it/s]Evaluating:  31%|███▏      | 31/99 [00:00<00:01, 54.62it/s]Evaluating:  38%|███▊      | 38/99 [00:00<00:01, 56.75it/s]Evaluating:  45%|████▌     | 45/99 [00:00<00:00, 57.92it/s]Evaluating:  53%|█████▎    | 52/99 [00:01<00:00, 58.80it/s]Evaluating:  60%|█████▉    | 59/99 [00:01<00:00, 59.95it/s]Evaluating:  67%|██████▋   | 66/99 [00:01<00:00, 62.49it/s]Evaluating:  74%|███████▎  | 73/99 [00:01<00:00, 64.60it/s]Evaluating:  82%|████████▏ | 81/99 [00:01<00:00, 66.45it/s]Evaluating:  90%|████████▉ | 89/99 [00:01<00:00, 68.02it/s]Evaluating:  98%|█████████▊| 97/99 [00:01<00:00, 70.96it/s]                                                           Epoch 12 done | train_loss=4.3212 | val_loss=2.3549 | time=48.5s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch12.pt
+Epoch 13 | Step 0 | Loss 4.1310
+Epoch 13 | Step 50 | Loss 4.4040
+Epoch 13 | Step 100 | Loss 4.2712
+Epoch 13 | Step 150 | Loss 4.2633
+Epoch 13 | Step 200 | Loss 4.2702
+Epoch 13 | Step 250 | Loss 4.2007
+Epoch 13 | Step 300 | Loss 4.0827
+Epoch 13 | Step 350 | Loss 4.0048
+Epoch 13 | Step 400 | Loss 4.4281
+Epoch 13 | Step 450 | Loss 4.0700
+Epoch 13 | Step 500 | Loss 4.1530
+Epoch 13 | Step 550 | Loss 4.3079
+Epoch 13 | Step 600 | Loss 3.8786
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:13,  7.00it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 32.89it/s]Evaluating:  14%|█▍        | 14/99 [00:00<00:01, 45.43it/s]Evaluating:  21%|██        | 21/99 [00:00<00:01, 51.35it/s]Evaluating:  28%|██▊       | 28/99 [00:00<00:01, 54.55it/s]Evaluating:  35%|███▌      | 35/99 [00:00<00:01, 56.42it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:00, 57.57it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 59.61it/s]Evaluating:  57%|█████▋    | 56/99 [00:01<00:00, 62.08it/s]Evaluating:  64%|██████▎   | 63/99 [00:01<00:00, 63.70it/s]Evaluating:  71%|███████   | 70/99 [00:01<00:00, 65.22it/s]Evaluating:  78%|███████▊  | 77/99 [00:01<00:00, 66.55it/s]Evaluating:  86%|████████▌ | 85/99 [00:01<00:00, 67.98it/s]Evaluating:  94%|█████████▍| 93/99 [00:01<00:00, 69.82it/s]                                                           Epoch 13 done | train_loss=4.2328 | val_loss=2.2162 | time=50.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch13.pt
+Epoch 14 | Step 0 | Loss 3.5531
+Epoch 14 | Step 50 | Loss 4.1793
+Epoch 14 | Step 100 | Loss 4.3516
+Epoch 14 | Step 150 | Loss 4.1063
+Epoch 14 | Step 200 | Loss 3.9403
+Epoch 14 | Step 250 | Loss 4.1538
+Epoch 14 | Step 300 | Loss 4.2161
+Epoch 14 | Step 350 | Loss 4.0736
+Epoch 14 | Step 400 | Loss 4.0604
+Epoch 14 | Step 450 | Loss 4.1703
+Epoch 14 | Step 500 | Loss 4.4394
+Epoch 14 | Step 550 | Loss 4.0744
+Epoch 14 | Step 600 | Loss 3.8587
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:12,  8.02it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 34.99it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 45.47it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 50.90it/s]Evaluating:  26%|██▋       | 26/99 [00:00<00:01, 54.48it/s]Evaluating:  33%|███▎      | 33/99 [00:00<00:01, 56.66it/s]Evaluating:  40%|████      | 40/99 [00:00<00:01, 57.97it/s]Evaluating:  47%|████▋     | 47/99 [00:00<00:00, 58.93it/s]Evaluating:  55%|█████▍    | 54/99 [00:00<00:00, 61.89it/s]Evaluating:  62%|██████▏   | 61/99 [00:01<00:00, 63.91it/s]Evaluating:  69%|██████▊   | 68/99 [00:01<00:00, 65.38it/s]Evaluating:  77%|███████▋  | 76/99 [00:01<00:00, 67.07it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 69.53it/s]Evaluating:  93%|█████████▎| 92/99 [00:01<00:00, 72.09it/s]                                                           Epoch 14 done | train_loss=4.1534 | val_loss=2.1052 | time=44.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch14.pt
+Epoch 15 | Step 0 | Loss 4.2827
+Epoch 15 | Step 50 | Loss 4.0087
+Epoch 15 | Step 100 | Loss 3.9723
+Epoch 15 | Step 150 | Loss 4.4882
+Epoch 15 | Step 200 | Loss 4.2790
+Epoch 15 | Step 250 | Loss 4.0010
+Epoch 15 | Step 300 | Loss 4.4078
+Epoch 15 | Step 350 | Loss 3.8171
+Epoch 15 | Step 400 | Loss 4.1624
+Epoch 15 | Step 450 | Loss 4.0243
+Epoch 15 | Step 500 | Loss 3.9033
+Epoch 15 | Step 550 | Loss 4.1734
+Epoch 15 | Step 600 | Loss 3.9581
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<01:03,  1.55it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:57,  1.70it/s]Evaluating:   8%|▊         | 8/99 [00:01<00:10,  8.86it/s]Evaluating:  14%|█▍        | 14/99 [00:01<00:05, 16.30it/s]Evaluating:  20%|██        | 20/99 [00:01<00:03, 23.51it/s]Evaluating:  26%|██▋       | 26/99 [00:01<00:02, 30.07it/s]Evaluating:  32%|███▏      | 32/99 [00:01<00:01, 35.75it/s]Evaluating:  38%|███▊      | 38/99 [00:01<00:01, 40.52it/s]Evaluating:  44%|████▍     | 44/99 [00:01<00:01, 44.37it/s]Evaluating:  51%|█████     | 50/99 [00:02<00:01, 47.36it/s]Evaluating:  57%|█████▋    | 56/99 [00:02<00:00, 49.55it/s]Evaluating:  63%|██████▎   | 62/99 [00:02<00:00, 50.98it/s]Evaluating:  69%|██████▊   | 68/99 [00:02<00:00, 51.90it/s]Evaluating:  75%|███████▍  | 74/99 [00:02<00:00, 52.88it/s]Evaluating:  81%|████████  | 80/99 [00:02<00:00, 53.63it/s]Evaluating:  87%|████████▋ | 86/99 [00:02<00:00, 54.52it/s]Evaluating:  93%|█████████▎| 92/99 [00:02<00:00, 55.67it/s]Evaluating: 100%|██████████| 99/99 [00:02<00:00, 58.59it/s]                                                           Epoch 15 done | train_loss=4.0722 | val_loss=1.9608 | time=45.3s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch15.pt
+Epoch 16 | Step 0 | Loss 3.8137
+Epoch 16 | Step 50 | Loss 3.9004
+Epoch 16 | Step 100 | Loss 3.8969
+Epoch 16 | Step 150 | Loss 3.8299
+Epoch 16 | Step 200 | Loss 3.6574
+Epoch 16 | Step 250 | Loss 3.9164
+Epoch 16 | Step 300 | Loss 4.3946
+Epoch 16 | Step 350 | Loss 4.0918
+Epoch 16 | Step 400 | Loss 4.1355
+Epoch 16 | Step 450 | Loss 3.8443
+Epoch 16 | Step 500 | Loss 4.1280
+Epoch 16 | Step 550 | Loss 4.0439
+Epoch 16 | Step 600 | Loss 4.0295
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:15,  6.47it/s]Evaluating:   6%|▌         | 6/99 [00:00<00:03, 26.79it/s]Evaluating:  12%|█▏        | 12/99 [00:00<00:02, 38.39it/s]Evaluating:  18%|█▊        | 18/99 [00:00<00:01, 44.48it/s]Evaluating:  24%|██▍       | 24/99 [00:00<00:01, 48.02it/s]Evaluating:  30%|███       | 30/99 [00:00<00:01, 50.39it/s]Evaluating:  36%|███▋      | 36/99 [00:00<00:01, 51.92it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:01, 52.88it/s]Evaluating:  48%|████▊     | 48/99 [00:01<00:00, 53.51it/s]Evaluating:  55%|█████▍    | 54/99 [00:01<00:00, 54.12it/s]Evaluating:  61%|██████    | 60/99 [00:01<00:00, 54.51it/s]Evaluating:  67%|██████▋   | 66/99 [00:01<00:00, 54.80it/s]Evaluating:  73%|███████▎  | 72/99 [00:01<00:00, 55.03it/s]Evaluating:  79%|███████▉  | 78/99 [00:01<00:00, 55.31it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 55.78it/s]Evaluating:  91%|█████████ | 90/99 [00:01<00:00, 56.24it/s]Evaluating:  98%|█████████▊| 97/99 [00:01<00:00, 58.37it/s]                                                           Epoch 16 done | train_loss=4.0024 | val_loss=1.8511 | time=47.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch16.pt
+Epoch 17 | Step 0 | Loss 3.8343
+Epoch 17 | Step 50 | Loss 4.0119
+Epoch 17 | Step 100 | Loss 3.8111
+Epoch 17 | Step 150 | Loss 3.7778
+Epoch 17 | Step 200 | Loss 3.9045
+Epoch 17 | Step 250 | Loss 3.7381
+Epoch 17 | Step 300 | Loss 4.0017
+Epoch 17 | Step 350 | Loss 3.8383
+Epoch 17 | Step 400 | Loss 3.8898
+Epoch 17 | Step 450 | Loss 3.7516
+Epoch 17 | Step 500 | Loss 4.1952
+Epoch 17 | Step 550 | Loss 3.7146
+Epoch 17 | Step 600 | Loss 3.6315
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:13,  7.10it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 33.24it/s]Evaluating:  14%|█▍        | 14/99 [00:00<00:01, 45.70it/s]Evaluating:  21%|██        | 21/99 [00:00<00:01, 52.16it/s]Evaluating:  28%|██▊       | 28/99 [00:00<00:01, 55.84it/s]Evaluating:  35%|███▌      | 35/99 [00:00<00:01, 58.05it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:00, 59.42it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 60.42it/s]Evaluating:  58%|█████▊    | 57/99 [00:01<00:00, 63.52it/s]Evaluating:  66%|██████▌   | 65/99 [00:01<00:00, 66.31it/s]Evaluating:  74%|███████▎  | 73/99 [00:01<00:00, 68.21it/s]Evaluating:  82%|████████▏ | 81/99 [00:01<00:00, 69.79it/s]Evaluating:  90%|████████▉ | 89/99 [00:01<00:00, 71.80it/s]Evaluating:  99%|█████████▉| 98/99 [00:01<00:00, 75.18it/s]                                                           Epoch 17 done | train_loss=3.9365 | val_loss=1.7292 | time=44.5s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch17.pt
+Epoch 18 | Step 0 | Loss 4.0878
+Epoch 18 | Step 50 | Loss 4.1197
+Epoch 18 | Step 100 | Loss 3.9278
+Epoch 18 | Step 150 | Loss 3.9205
+Epoch 18 | Step 200 | Loss 3.8121
+Epoch 18 | Step 250 | Loss 3.7917
+Epoch 18 | Step 300 | Loss 3.6446
+Epoch 18 | Step 350 | Loss 3.8466
+Epoch 18 | Step 400 | Loss 3.8578
+Epoch 18 | Step 450 | Loss 4.0105
+Epoch 18 | Step 500 | Loss 3.8530
+Epoch 18 | Step 550 | Loss 4.0273
+Epoch 18 | Step 600 | Loss 4.2891
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:13,  7.08it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 32.33it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 43.53it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 49.37it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 52.91it/s]Evaluating:  32%|███▏      | 32/99 [00:00<00:01, 55.75it/s]Evaluating:  39%|███▉      | 39/99 [00:00<00:01, 57.54it/s]Evaluating:  46%|████▋     | 46/99 [00:00<00:00, 58.50it/s]Evaluating:  54%|█████▎    | 53/99 [00:01<00:00, 59.14it/s]Evaluating:  61%|██████    | 60/99 [00:01<00:00, 61.32it/s]Evaluating:  68%|██████▊   | 67/99 [00:01<00:00, 63.75it/s]Evaluating:  75%|███████▍  | 74/99 [00:01<00:00, 65.51it/s]Evaluating:  83%|████████▎ | 82/99 [00:01<00:00, 67.25it/s]Evaluating:  91%|█████████ | 90/99 [00:01<00:00, 68.88it/s]Evaluating: 100%|██████████| 99/99 [00:01<00:00, 72.85it/s]                                                           Epoch 18 done | train_loss=3.8714 | val_loss=1.6415 | time=45.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch18.pt
+Epoch 19 | Step 0 | Loss 4.1181
+Epoch 19 | Step 50 | Loss 3.7144
+Epoch 19 | Step 100 | Loss 3.8356
+Epoch 19 | Step 150 | Loss 3.9495
+Epoch 19 | Step 200 | Loss 4.0244
+Epoch 19 | Step 250 | Loss 4.1599
+Epoch 19 | Step 300 | Loss 4.0166
+Epoch 19 | Step 350 | Loss 3.8012
+Epoch 19 | Step 400 | Loss 3.7507
+Epoch 19 | Step 450 | Loss 4.1543
+Epoch 19 | Step 500 | Loss 4.2642
+Epoch 19 | Step 550 | Loss 4.1723
+Epoch 19 | Step 600 | Loss 3.8930
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.91it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 32.19it/s]Evaluating:  14%|█▍        | 14/99 [00:00<00:01, 47.13it/s]Evaluating:  21%|██        | 21/99 [00:00<00:01, 55.38it/s]Evaluating:  28%|██▊       | 28/99 [00:00<00:01, 60.34it/s]Evaluating:  36%|███▋      | 36/99 [00:00<00:00, 63.84it/s]Evaluating:  44%|████▍     | 44/99 [00:00<00:00, 66.13it/s]Evaluating:  53%|█████▎    | 52/99 [00:00<00:00, 67.66it/s]Evaluating:  61%|██████    | 60/99 [00:01<00:00, 68.67it/s]Evaluating:  69%|██████▊   | 68/99 [00:01<00:00, 69.39it/s]Evaluating:  77%|███████▋  | 76/99 [00:01<00:00, 69.99it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 70.58it/s]Evaluating:  93%|█████████▎| 92/99 [00:01<00:00, 71.66it/s]                                                           Epoch 19 done | train_loss=3.8103 | val_loss=1.5480 | time=44.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch19.pt
+Epoch 20 | Step 0 | Loss 3.7953
+Epoch 20 | Step 50 | Loss 3.4933
+Epoch 20 | Step 100 | Loss 3.5411
+Epoch 20 | Step 150 | Loss 4.0253
+Epoch 20 | Step 200 | Loss 3.8008
+Epoch 20 | Step 250 | Loss 3.5987
+Epoch 20 | Step 300 | Loss 3.5595
+Epoch 20 | Step 350 | Loss 3.7075
+Epoch 20 | Step 400 | Loss 3.6422
+Epoch 20 | Step 450 | Loss 3.9438
+Epoch 20 | Step 500 | Loss 3.2325
+Epoch 20 | Step 550 | Loss 3.5904
+Epoch 20 | Step 600 | Loss 3.5222
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<01:01,  1.60it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:53,  1.83it/s]Evaluating:   9%|▉         | 9/99 [00:01<00:08, 10.88it/s]Evaluating:  17%|█▋        | 17/99 [00:01<00:03, 21.45it/s]Evaluating:  24%|██▍       | 24/99 [00:01<00:02, 30.26it/s]Evaluating:  31%|███▏      | 31/99 [00:01<00:01, 38.44it/s]Evaluating:  38%|███▊      | 38/99 [00:01<00:01, 45.53it/s]Evaluating:  45%|████▌     | 45/99 [00:01<00:01, 51.50it/s]Evaluating:  53%|█████▎    | 52/99 [00:01<00:00, 56.21it/s]Evaluating:  60%|█████▉    | 59/99 [00:01<00:00, 59.91it/s]Evaluating:  68%|██████▊   | 67/99 [00:02<00:00, 63.15it/s]Evaluating:  76%|███████▌  | 75/99 [00:02<00:00, 65.52it/s]Evaluating:  84%|████████▍ | 83/99 [00:02<00:00, 67.39it/s]Evaluating:  92%|█████████▏| 91/99 [00:02<00:00, 69.43it/s]                                                           Epoch 20 done | train_loss=3.7567 | val_loss=1.4855 | time=45.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch20.pt
+Epoch 21 | Step 0 | Loss 3.5624
+Epoch 21 | Step 50 | Loss 3.9762
+Epoch 21 | Step 100 | Loss 4.3068
+Epoch 21 | Step 150 | Loss 3.7953
+Epoch 21 | Step 200 | Loss 3.9048
+Epoch 21 | Step 250 | Loss 3.8797
+Epoch 21 | Step 300 | Loss 3.4359
+Epoch 21 | Step 350 | Loss 3.9575
+Epoch 21 | Step 400 | Loss 3.5407
+Epoch 21 | Step 450 | Loss 3.6720
+Epoch 21 | Step 500 | Loss 3.6008
+Epoch 21 | Step 550 | Loss 3.8712
+Epoch 21 | Step 600 | Loss 3.6073
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:13,  7.15it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 32.45it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 43.58it/s]Evaluating:  20%|██        | 20/99 [00:00<00:01, 50.25it/s]Evaluating:  27%|██▋       | 27/99 [00:00<00:01, 53.97it/s]Evaluating:  34%|███▍      | 34/99 [00:00<00:01, 56.20it/s]Evaluating:  41%|████▏     | 41/99 [00:00<00:01, 57.78it/s]Evaluating:  48%|████▊     | 48/99 [00:00<00:00, 58.52it/s]Evaluating:  56%|█████▌    | 55/99 [00:01<00:00, 61.03it/s]Evaluating:  63%|██████▎   | 62/99 [00:01<00:00, 63.44it/s]Evaluating:  70%|██████▉   | 69/99 [00:01<00:00, 65.07it/s]Evaluating:  77%|███████▋  | 76/99 [00:01<00:00, 66.32it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 67.69it/s]Evaluating:  93%|█████████▎| 92/99 [00:01<00:00, 69.38it/s]                                                           Epoch 21 done | train_loss=3.7034 | val_loss=1.4008 | time=44.5s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch21.pt
+Epoch 22 | Step 0 | Loss 3.8059
+Epoch 22 | Step 50 | Loss 3.6481
+Epoch 22 | Step 100 | Loss 3.5553
+Epoch 22 | Step 150 | Loss 3.6267
+Epoch 22 | Step 200 | Loss 3.8602
+Epoch 22 | Step 250 | Loss 3.6060
+Epoch 22 | Step 300 | Loss 3.8508
+Epoch 22 | Step 350 | Loss 3.7883
+Epoch 22 | Step 400 | Loss 3.5850
+Epoch 22 | Step 450 | Loss 3.6817
+Epoch 22 | Step 500 | Loss 4.0782
+Epoch 22 | Step 550 | Loss 3.6103
+Epoch 22 | Step 600 | Loss 3.4785
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:16,  5.98it/s]Evaluating:   6%|▌         | 6/99 [00:00<00:03, 26.12it/s]Evaluating:  12%|█▏        | 12/99 [00:00<00:02, 39.05it/s]Evaluating:  18%|█▊        | 18/99 [00:00<00:01, 46.25it/s]Evaluating:  24%|██▍       | 24/99 [00:00<00:01, 50.76it/s]Evaluating:  30%|███       | 30/99 [00:00<00:01, 53.64it/s]Evaluating:  36%|███▋      | 36/99 [00:00<00:01, 55.62it/s]Evaluating:  43%|████▎     | 43/99 [00:00<00:00, 57.22it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 58.01it/s]Evaluating:  56%|█████▌    | 55/99 [00:01<00:00, 58.59it/s]Evaluating:  63%|██████▎   | 62/99 [00:01<00:00, 61.17it/s]Evaluating:  70%|██████▉   | 69/99 [00:01<00:00, 63.71it/s]Evaluating:  77%|███████▋  | 76/99 [00:01<00:00, 65.29it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 67.17it/s]Evaluating:  93%|█████████▎| 92/99 [00:01<00:00, 69.08it/s]                                                           Epoch 22 done | train_loss=3.6560 | val_loss=1.3545 | time=45.0s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch22.pt
+Epoch 23 | Step 0 | Loss 3.7439
+Epoch 23 | Step 50 | Loss 3.5293
+Epoch 23 | Step 100 | Loss 3.4499
+Epoch 23 | Step 150 | Loss 3.4226
+Epoch 23 | Step 200 | Loss 4.1352
+Epoch 23 | Step 250 | Loss 3.9778
+Epoch 23 | Step 300 | Loss 3.7406
+Epoch 23 | Step 350 | Loss 3.6515
+Epoch 23 | Step 400 | Loss 3.6816
+Epoch 23 | Step 450 | Loss 3.7425
+Epoch 23 | Step 500 | Loss 3.4971
+Epoch 23 | Step 550 | Loss 3.5477
+Epoch 23 | Step 600 | Loss 3.4714
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:12,  7.74it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 33.63it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 44.56it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 50.24it/s]Evaluating:  26%|██▋       | 26/99 [00:00<00:01, 54.28it/s]Evaluating:  33%|███▎      | 33/99 [00:00<00:01, 56.64it/s]Evaluating:  40%|████      | 40/99 [00:00<00:01, 58.20it/s]Evaluating:  47%|████▋     | 47/99 [00:00<00:00, 59.06it/s]Evaluating:  55%|█████▍    | 54/99 [00:01<00:00, 61.38it/s]Evaluating:  63%|██████▎   | 62/99 [00:01<00:00, 64.71it/s]Evaluating:  71%|███████   | 70/99 [00:01<00:00, 67.25it/s]Evaluating:  79%|███████▉  | 78/99 [00:01<00:00, 69.11it/s]Evaluating:  87%|████████▋ | 86/99 [00:01<00:00, 71.11it/s]Evaluating:  95%|█████████▍| 94/99 [00:01<00:00, 73.61it/s]                                                           Epoch 23 done | train_loss=3.6164 | val_loss=1.2859 | time=45.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch23.pt
+Epoch 24 | Step 0 | Loss 3.6975
+Epoch 24 | Step 50 | Loss 3.3977
+Epoch 24 | Step 100 | Loss 3.3058
+Epoch 24 | Step 150 | Loss 3.5314
+Epoch 24 | Step 200 | Loss 3.3795
+Epoch 24 | Step 250 | Loss 3.4432
+Epoch 24 | Step 300 | Loss 3.3344
+Epoch 24 | Step 350 | Loss 3.5868
+Epoch 24 | Step 400 | Loss 3.4365
+Epoch 24 | Step 450 | Loss 3.4547
+Epoch 24 | Step 500 | Loss 3.6318
+Epoch 24 | Step 550 | Loss 3.7040
+Epoch 24 | Step 600 | Loss 3.4951
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.83it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 31.03it/s]Evaluating:  14%|█▍        | 14/99 [00:00<00:01, 46.15it/s]Evaluating:  21%|██        | 21/99 [00:00<00:01, 54.52it/s]Evaluating:  28%|██▊       | 28/99 [00:00<00:01, 59.43it/s]Evaluating:  35%|███▌      | 35/99 [00:00<00:01, 62.84it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:00, 64.90it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 66.34it/s]Evaluating:  57%|█████▋    | 56/99 [00:00<00:00, 67.30it/s]Evaluating:  64%|██████▎   | 63/99 [00:01<00:00, 68.06it/s]Evaluating:  71%|███████   | 70/99 [00:01<00:00, 68.22it/s]Evaluating:  79%|███████▉  | 78/99 [00:01<00:00, 68.90it/s]Evaluating:  87%|████████▋ | 86/99 [00:01<00:00, 69.70it/s]Evaluating:  95%|█████████▍| 94/99 [00:01<00:00, 71.12it/s]                                                           Epoch 24 done | train_loss=3.5767 | val_loss=1.2500 | time=44.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch24.pt
+Epoch 25 | Step 0 | Loss 3.8100
+Epoch 25 | Step 50 | Loss 3.4104
+Epoch 25 | Step 100 | Loss 3.6802
+Epoch 25 | Step 150 | Loss 3.2569
+Epoch 25 | Step 200 | Loss 3.4829
+Epoch 25 | Step 250 | Loss 3.4503
+Epoch 25 | Step 300 | Loss 3.3497
+Epoch 25 | Step 350 | Loss 3.3519
+Epoch 25 | Step 400 | Loss 3.7724
+Epoch 25 | Step 450 | Loss 3.4914
+Epoch 25 | Step 500 | Loss 3.9642
+Epoch 25 | Step 550 | Loss 3.3242
+Epoch 25 | Step 600 | Loss 3.5658
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:55,  1.78it/s]Evaluating:   2%|▏         | 2/99 [00:00<00:46,  2.07it/s]Evaluating:   9%|▉         | 9/99 [00:01<00:07, 12.09it/s]Evaluating:  16%|█▌        | 16/99 [00:01<00:03, 22.09it/s]Evaluating:  23%|██▎       | 23/99 [00:01<00:02, 31.53it/s]Evaluating:  30%|███       | 30/99 [00:01<00:01, 39.92it/s]Evaluating:  37%|███▋      | 37/99 [00:01<00:01, 46.91it/s]Evaluating:  44%|████▍     | 44/99 [00:01<00:01, 52.50it/s]Evaluating:  52%|█████▏    | 51/99 [00:01<00:00, 56.93it/s]Evaluating:  59%|█████▊    | 58/99 [00:01<00:00, 60.25it/s]Evaluating:  66%|██████▌   | 65/99 [00:01<00:00, 62.54it/s]Evaluating:  73%|███████▎  | 72/99 [00:02<00:00, 64.57it/s]Evaluating:  80%|███████▉  | 79/99 [00:02<00:00, 66.11it/s]Evaluating:  88%|████████▊ | 87/99 [00:02<00:00, 67.98it/s]Evaluating:  96%|█████████▌| 95/99 [00:02<00:00, 70.13it/s]                                                           Epoch 25 done | train_loss=3.5403 | val_loss=1.2114 | time=45.6s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch25.pt
+Epoch 26 | Step 0 | Loss 3.6022
+Epoch 26 | Step 50 | Loss 3.7030
+Epoch 26 | Step 100 | Loss 3.3711
+Epoch 26 | Step 150 | Loss 3.7353
+Epoch 26 | Step 200 | Loss 3.3993
+Epoch 26 | Step 250 | Loss 3.3832
+Epoch 26 | Step 300 | Loss 3.3920
+Epoch 26 | Step 350 | Loss 3.4823
+Epoch 26 | Step 400 | Loss 3.4796
+Epoch 26 | Step 450 | Loss 3.3176
+Epoch 26 | Step 500 | Loss 3.5843
+Epoch 26 | Step 550 | Loss 3.5061
+Epoch 26 | Step 600 | Loss 3.5302
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.95it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 30.79it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:02, 41.91it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 48.28it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 52.03it/s]Evaluating:  32%|███▏      | 32/99 [00:00<00:01, 55.21it/s]Evaluating:  39%|███▉      | 39/99 [00:00<00:01, 57.17it/s]Evaluating:  46%|████▋     | 46/99 [00:00<00:00, 58.17it/s]Evaluating:  54%|█████▎    | 53/99 [00:01<00:00, 58.84it/s]Evaluating:  61%|██████    | 60/99 [00:01<00:00, 60.34it/s]Evaluating:  68%|██████▊   | 67/99 [00:01<00:00, 62.87it/s]Evaluating:  75%|███████▍  | 74/99 [00:01<00:00, 64.80it/s]Evaluating:  83%|████████▎ | 82/99 [00:01<00:00, 66.62it/s]Evaluating:  91%|█████████ | 90/99 [00:01<00:00, 68.36it/s]Evaluating: 100%|██████████| 99/99 [00:01<00:00, 72.65it/s]                                                           Epoch 26 done | train_loss=3.5094 | val_loss=1.1644 | time=44.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch26.pt
+Epoch 27 | Step 0 | Loss 3.5048
+Epoch 27 | Step 50 | Loss 3.4495
+Epoch 27 | Step 100 | Loss 3.4431
+Epoch 27 | Step 150 | Loss 3.1572
+Epoch 27 | Step 200 | Loss 3.3334
+Epoch 27 | Step 250 | Loss 3.4923
+Epoch 27 | Step 300 | Loss 3.6169
+Epoch 27 | Step 350 | Loss 3.8321
+Epoch 27 | Step 400 | Loss 3.3072
+Epoch 27 | Step 450 | Loss 3.5552
+Epoch 27 | Step 500 | Loss 3.3183
+Epoch 27 | Step 550 | Loss 3.2546
+Epoch 27 | Step 600 | Loss 3.1596
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:15,  6.42it/s]Evaluating:   6%|▌         | 6/99 [00:00<00:03, 26.66it/s]Evaluating:  12%|█▏        | 12/99 [00:00<00:02, 39.82it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 47.91it/s]Evaluating:  26%|██▋       | 26/99 [00:00<00:01, 53.88it/s]Evaluating:  33%|███▎      | 33/99 [00:00<00:01, 58.61it/s]Evaluating:  40%|████      | 40/99 [00:00<00:00, 61.88it/s]Evaluating:  47%|████▋     | 47/99 [00:00<00:00, 63.85it/s]Evaluating:  55%|█████▍    | 54/99 [00:00<00:00, 65.14it/s]Evaluating:  62%|██████▏   | 61/99 [00:01<00:00, 65.90it/s]Evaluating:  69%|██████▊   | 68/99 [00:01<00:00, 66.88it/s]Evaluating:  76%|███████▌  | 75/99 [00:01<00:00, 67.41it/s]Evaluating:  83%|████████▎ | 82/99 [00:01<00:00, 68.15it/s]Evaluating:  91%|█████████ | 90/99 [00:01<00:00, 69.53it/s]Evaluating:  99%|█████████▉| 98/99 [00:01<00:00, 72.35it/s]                                                           Epoch 27 done | train_loss=3.4813 | val_loss=1.1422 | time=44.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch27.pt
+Epoch 28 | Step 0 | Loss 3.2108
+Epoch 28 | Step 50 | Loss 3.3866
+Epoch 28 | Step 100 | Loss 3.3709
+Epoch 28 | Step 150 | Loss 3.4446
+Epoch 28 | Step 200 | Loss 3.5608
+Epoch 28 | Step 250 | Loss 3.3225
+Epoch 28 | Step 300 | Loss 3.2394
+Epoch 28 | Step 350 | Loss 3.4480
+Epoch 28 | Step 400 | Loss 3.5966
+Epoch 28 | Step 450 | Loss 3.3298
+Epoch 28 | Step 500 | Loss 3.6041
+Epoch 28 | Step 550 | Loss 3.4399
+Epoch 28 | Step 600 | Loss 3.5146
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.77it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 31.96it/s]Evaluating:  14%|█▍        | 14/99 [00:00<00:01, 44.29it/s]Evaluating:  21%|██        | 21/99 [00:00<00:01, 50.48it/s]Evaluating:  28%|██▊       | 28/99 [00:00<00:01, 54.14it/s]Evaluating:  35%|███▌      | 35/99 [00:00<00:01, 56.43it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:00, 57.74it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 58.86it/s]Evaluating:  57%|█████▋    | 56/99 [00:01<00:00, 59.78it/s]Evaluating:  64%|██████▎   | 63/99 [00:01<00:00, 62.24it/s]Evaluating:  71%|███████   | 70/99 [00:01<00:00, 64.14it/s]Evaluating:  78%|███████▊  | 77/99 [00:01<00:00, 65.59it/s]Evaluating:  86%|████████▌ | 85/99 [00:01<00:00, 67.32it/s]Evaluating:  94%|█████████▍| 93/99 [00:01<00:00, 69.21it/s]                                                           Epoch 28 done | train_loss=3.4568 | val_loss=1.1190 | time=44.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch28.pt
+Epoch 29 | Step 0 | Loss 3.1997
+Epoch 29 | Step 50 | Loss 3.2264
+Epoch 29 | Step 100 | Loss 3.4054
+Epoch 29 | Step 150 | Loss 3.2991
+Epoch 29 | Step 200 | Loss 3.3695
+Epoch 29 | Step 250 | Loss 3.2931
+Epoch 29 | Step 300 | Loss 3.3041
+Epoch 29 | Step 350 | Loss 3.2508
+Epoch 29 | Step 400 | Loss 3.6267
+Epoch 29 | Step 450 | Loss 3.5221
+Epoch 29 | Step 500 | Loss 3.2992
+Epoch 29 | Step 550 | Loss 3.2755
+Epoch 29 | Step 600 | Loss 3.2501
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.88it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:03, 30.67it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:02, 42.05it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 48.28it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 52.14it/s]Evaluating:  31%|███▏      | 31/99 [00:00<00:01, 54.55it/s]Evaluating:  38%|███▊      | 38/99 [00:00<00:01, 56.58it/s]Evaluating:  44%|████▍     | 44/99 [00:00<00:00, 57.48it/s]Evaluating:  52%|█████▏    | 51/99 [00:00<00:00, 58.38it/s]Evaluating:  59%|█████▊    | 58/99 [00:01<00:00, 59.50it/s]Evaluating:  66%|██████▌   | 65/99 [00:01<00:00, 62.19it/s]Evaluating:  73%|███████▎  | 72/99 [00:01<00:00, 64.12it/s]Evaluating:  80%|███████▉  | 79/99 [00:01<00:00, 65.75it/s]Evaluating:  88%|████████▊ | 87/99 [00:01<00:00, 67.87it/s]Evaluating:  96%|█████████▌| 95/99 [00:01<00:00, 70.10it/s]                                                           Epoch 29 done | train_loss=3.4319 | val_loss=1.0895 | time=44.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch29.pt
+Epoch 30 | Step 0 | Loss 3.6161
+Epoch 30 | Step 50 | Loss 3.2908
+Epoch 30 | Step 100 | Loss 3.7345
+Epoch 30 | Step 150 | Loss 3.4355
+Epoch 30 | Step 200 | Loss 3.2142
+Epoch 30 | Step 250 | Loss 3.8091
+Epoch 30 | Step 300 | Loss 3.3533
+Epoch 30 | Step 350 | Loss 3.3532
+Epoch 30 | Step 400 | Loss 3.2836
+Epoch 30 | Step 450 | Loss 3.4294
+Epoch 30 | Step 500 | Loss 3.1635
+Epoch 30 | Step 550 | Loss 3.4510
+Epoch 30 | Step 600 | Loss 3.2820
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:59,  1.66it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:48,  2.00it/s]Evaluating:   9%|▉         | 9/99 [00:01<00:07, 11.74it/s]Evaluating:  16%|█▌        | 16/99 [00:01<00:03, 21.58it/s]Evaluating:  23%|██▎       | 23/99 [00:01<00:02, 30.77it/s]Evaluating:  30%|███       | 30/99 [00:01<00:01, 38.76it/s]Evaluating:  37%|███▋      | 37/99 [00:01<00:01, 45.49it/s]Evaluating:  44%|████▍     | 44/99 [00:01<00:01, 50.72it/s]Evaluating:  52%|█████▏    | 51/99 [00:01<00:00, 55.28it/s]Evaluating:  59%|█████▊    | 58/99 [00:01<00:00, 58.64it/s]Evaluating:  66%|██████▌   | 65/99 [00:01<00:00, 61.56it/s]Evaluating:  73%|███████▎  | 72/99 [00:02<00:00, 63.23it/s]Evaluating:  80%|███████▉  | 79/99 [00:02<00:00, 64.96it/s]Evaluating:  88%|████████▊ | 87/99 [00:02<00:00, 67.38it/s]Evaluating:  96%|█████████▌| 95/99 [00:02<00:00, 70.01it/s]                                                           Epoch 30 done | train_loss=3.4133 | val_loss=1.0698 | time=45.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch30.pt
+Epoch 31 | Step 0 | Loss 3.2686
+Epoch 31 | Step 50 | Loss 3.4710
+Epoch 31 | Step 100 | Loss 3.3803
+Epoch 31 | Step 150 | Loss 3.3084
+Epoch 31 | Step 200 | Loss 3.2056
+Epoch 31 | Step 250 | Loss 3.1811
+Epoch 31 | Step 300 | Loss 3.2976
+Epoch 31 | Step 350 | Loss 3.1377
+Epoch 31 | Step 400 | Loss 3.5283
+Epoch 31 | Step 450 | Loss 3.3377
+Epoch 31 | Step 500 | Loss 3.2152
+Epoch 31 | Step 550 | Loss 3.2934
+Epoch 31 | Step 600 | Loss 3.4666
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:13,  7.11it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 33.02it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 44.11it/s]Evaluating:  20%|██        | 20/99 [00:00<00:01, 50.66it/s]Evaluating:  27%|██▋       | 27/99 [00:00<00:01, 54.26it/s]Evaluating:  34%|███▍      | 34/99 [00:00<00:01, 56.45it/s]Evaluating:  41%|████▏     | 41/99 [00:00<00:01, 57.74it/s]Evaluating:  48%|████▊     | 48/99 [00:00<00:00, 59.27it/s]Evaluating:  56%|█████▌    | 55/99 [00:01<00:00, 61.94it/s]Evaluating:  63%|██████▎   | 62/99 [00:01<00:00, 63.82it/s]Evaluating:  70%|██████▉   | 69/99 [00:01<00:00, 65.33it/s]Evaluating:  77%|███████▋  | 76/99 [00:01<00:00, 66.49it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 67.81it/s]Evaluating:  93%|█████████▎| 92/99 [00:01<00:00, 69.37it/s]                                                           Epoch 31 done | train_loss=3.3983 | val_loss=1.0610 | time=44.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch31.pt
+Epoch 32 | Step 0 | Loss 3.4150
+Epoch 32 | Step 50 | Loss 3.6954
+Epoch 32 | Step 100 | Loss 3.6763
+Epoch 32 | Step 150 | Loss 3.8557
+Epoch 32 | Step 200 | Loss 3.4630
+Epoch 32 | Step 250 | Loss 3.4266
+Epoch 32 | Step 300 | Loss 3.7026
+Epoch 32 | Step 350 | Loss 3.4363
+Epoch 32 | Step 400 | Loss 3.8089
+Epoch 32 | Step 450 | Loss 3.2237
+Epoch 32 | Step 500 | Loss 3.5988
+Epoch 32 | Step 550 | Loss 3.4463
+Epoch 32 | Step 600 | Loss 3.1814
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:13,  7.20it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 33.20it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 43.87it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 49.60it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 52.91it/s]Evaluating:  32%|███▏      | 32/99 [00:00<00:01, 55.63it/s]Evaluating:  39%|███▉      | 39/99 [00:00<00:01, 57.33it/s]Evaluating:  46%|████▋     | 46/99 [00:00<00:00, 58.38it/s]Evaluating:  54%|█████▎    | 53/99 [00:00<00:00, 61.44it/s]Evaluating:  61%|██████    | 60/99 [00:01<00:00, 63.61it/s]Evaluating:  68%|██████▊   | 67/99 [00:01<00:00, 64.66it/s]Evaluating:  75%|███████▍  | 74/99 [00:01<00:00, 65.55it/s]Evaluating:  82%|████████▏ | 81/99 [00:01<00:00, 66.47it/s]Evaluating:  90%|████████▉ | 89/99 [00:01<00:00, 67.86it/s]Evaluating:  98%|█████████▊| 97/99 [00:01<00:00, 70.49it/s]                                                           Epoch 32 done | train_loss=3.3826 | val_loss=1.0477 | time=45.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch32.pt
+Epoch 33 | Step 0 | Loss 3.2144
+Epoch 33 | Step 50 | Loss 3.1488
+Epoch 33 | Step 100 | Loss 3.3820
+Epoch 33 | Step 150 | Loss 3.4102
+Epoch 33 | Step 200 | Loss 3.3796
+Epoch 33 | Step 250 | Loss 3.1299
+Epoch 33 | Step 300 | Loss 3.1449
+Epoch 33 | Step 350 | Loss 3.4721
+Epoch 33 | Step 400 | Loss 3.2575
+Epoch 33 | Step 450 | Loss 3.1248
+Epoch 33 | Step 500 | Loss 3.7607
+Epoch 33 | Step 550 | Loss 3.2345
+Epoch 33 | Step 600 | Loss 3.2521
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.71it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 31.86it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 43.16it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 49.01it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 52.57it/s]Evaluating:  31%|███▏      | 31/99 [00:00<00:01, 54.74it/s]Evaluating:  37%|███▋      | 37/99 [00:00<00:01, 56.39it/s]Evaluating:  43%|████▎     | 43/99 [00:00<00:00, 57.38it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 58.00it/s]Evaluating:  57%|█████▋    | 56/99 [00:01<00:00, 59.62it/s]Evaluating:  64%|██████▎   | 63/99 [00:01<00:00, 62.23it/s]Evaluating:  71%|███████   | 70/99 [00:01<00:00, 64.08it/s]Evaluating:  79%|███████▉  | 78/99 [00:01<00:00, 65.82it/s]Evaluating:  87%|████████▋ | 86/99 [00:01<00:00, 67.63it/s]Evaluating:  95%|█████████▍| 94/99 [00:01<00:00, 69.47it/s]                                                           Epoch 33 done | train_loss=3.3698 | val_loss=1.0366 | time=44.9s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch33.pt
+Epoch 34 | Step 0 | Loss 3.0723
+Epoch 34 | Step 50 | Loss 3.2798
+Epoch 34 | Step 100 | Loss 3.0938
+Epoch 34 | Step 150 | Loss 3.1915
+Epoch 34 | Step 200 | Loss 3.2353
+Epoch 34 | Step 250 | Loss 3.3182
+Epoch 34 | Step 300 | Loss 3.3431
+Epoch 34 | Step 350 | Loss 3.2304
+Epoch 34 | Step 400 | Loss 3.1712
+Epoch 34 | Step 450 | Loss 3.2363
+Epoch 34 | Step 500 | Loss 3.4767
+Epoch 34 | Step 550 | Loss 3.2114
+Epoch 34 | Step 600 | Loss 3.1942
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:13,  7.22it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 33.28it/s]Evaluating:  14%|█▍        | 14/99 [00:00<00:01, 45.51it/s]Evaluating:  21%|██        | 21/99 [00:00<00:01, 51.39it/s]Evaluating:  28%|██▊       | 28/99 [00:00<00:01, 54.93it/s]Evaluating:  35%|███▌      | 35/99 [00:00<00:01, 56.94it/s]Evaluating:  42%|████▏     | 42/99 [00:00<00:00, 58.31it/s]Evaluating:  49%|████▉     | 49/99 [00:00<00:00, 59.78it/s]Evaluating:  57%|█████▋    | 56/99 [00:01<00:00, 61.30it/s]Evaluating:  64%|██████▎   | 63/99 [00:01<00:00, 62.59it/s]Evaluating:  71%|███████   | 70/99 [00:01<00:00, 63.91it/s]Evaluating:  78%|███████▊  | 77/99 [00:01<00:00, 65.17it/s]Evaluating:  86%|████████▌ | 85/99 [00:01<00:00, 66.90it/s]Evaluating:  94%|█████████▍| 93/99 [00:01<00:00, 68.87it/s]                                                           Epoch 34 done | train_loss=3.3620 | val_loss=1.0310 | time=44.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch34.pt
+Epoch 35 | Step 0 | Loss 3.3986
+Epoch 35 | Step 50 | Loss 3.2645
+Epoch 35 | Step 100 | Loss 3.3129
+Epoch 35 | Step 150 | Loss 3.3147
+Epoch 35 | Step 200 | Loss 3.1817
+Epoch 35 | Step 250 | Loss 3.4742
+Epoch 35 | Step 300 | Loss 3.2261
+Epoch 35 | Step 350 | Loss 3.2287
+Epoch 35 | Step 400 | Loss 3.3201
+Epoch 35 | Step 450 | Loss 3.7650
+Epoch 35 | Step 500 | Loss 3.4156
+Epoch 35 | Step 550 | Loss 3.2886
+Epoch 35 | Step 600 | Loss 3.3577
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:58,  1.67it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:49,  1.96it/s]Evaluating:   9%|▉         | 9/99 [00:01<00:07, 11.55it/s]Evaluating:  16%|█▌        | 16/99 [00:01<00:03, 21.25it/s]Evaluating:  23%|██▎       | 23/99 [00:01<00:02, 30.46it/s]Evaluating:  30%|███       | 30/99 [00:01<00:01, 38.77it/s]Evaluating:  37%|███▋      | 37/99 [00:01<00:01, 45.84it/s]Evaluating:  44%|████▍     | 44/99 [00:01<00:01, 51.42it/s]Evaluating:  52%|█████▏    | 51/99 [00:01<00:00, 55.59it/s]Evaluating:  59%|█████▊    | 58/99 [00:01<00:00, 58.86it/s]Evaluating:  66%|██████▌   | 65/99 [00:01<00:00, 61.63it/s]Evaluating:  73%|███████▎  | 72/99 [00:02<00:00, 63.35it/s]Evaluating:  80%|███████▉  | 79/99 [00:02<00:00, 65.10it/s]Evaluating:  88%|████████▊ | 87/99 [00:02<00:00, 67.08it/s]Evaluating:  96%|█████████▌| 95/99 [00:02<00:00, 70.01it/s]                                                           Epoch 35 done | train_loss=3.3534 | val_loss=1.0227 | time=45.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch35.pt
+Epoch 36 | Step 0 | Loss 3.3356
+Epoch 36 | Step 50 | Loss 3.2663
+Epoch 36 | Step 100 | Loss 3.2285
+Epoch 36 | Step 150 | Loss 3.3348
+Epoch 36 | Step 200 | Loss 3.3013
+Epoch 36 | Step 250 | Loss 3.3346
+Epoch 36 | Step 300 | Loss 3.6523
+Epoch 36 | Step 350 | Loss 3.2165
+Epoch 36 | Step 400 | Loss 3.3069
+Epoch 36 | Step 450 | Loss 3.1666
+Epoch 36 | Step 500 | Loss 3.1723
+Epoch 36 | Step 550 | Loss 3.3347
+Epoch 36 | Step 600 | Loss 3.2630
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:14,  6.70it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 31.88it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:02, 42.71it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 48.84it/s]Evaluating:  26%|██▋       | 26/99 [00:00<00:01, 53.09it/s]Evaluating:  32%|███▏      | 32/99 [00:00<00:01, 55.23it/s]Evaluating:  39%|███▉      | 39/99 [00:00<00:01, 56.98it/s]Evaluating:  45%|████▌     | 45/99 [00:00<00:00, 57.77it/s]Evaluating:  53%|█████▎    | 52/99 [00:00<00:00, 61.03it/s]Evaluating:  60%|█████▉    | 59/99 [00:01<00:00, 63.32it/s]Evaluating:  67%|██████▋   | 66/99 [00:01<00:00, 64.30it/s]Evaluating:  75%|███████▍  | 74/99 [00:01<00:00, 66.41it/s]Evaluating:  83%|████████▎ | 82/99 [00:01<00:00, 67.89it/s]Evaluating:  91%|█████████ | 90/99 [00:01<00:00, 69.53it/s]Evaluating: 100%|██████████| 99/99 [00:01<00:00, 73.40it/s]                                                           Epoch 36 done | train_loss=3.3486 | val_loss=1.0227 | time=44.7s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch36.pt
+Epoch 37 | Step 0 | Loss 3.1794
+Epoch 37 | Step 50 | Loss 3.2581
+Epoch 37 | Step 100 | Loss 3.9506
+Epoch 37 | Step 150 | Loss 3.1505
+Epoch 37 | Step 200 | Loss 3.1966
+Epoch 37 | Step 250 | Loss 3.2694
+Epoch 37 | Step 300 | Loss 3.1561
+Epoch 37 | Step 350 | Loss 3.1595
+Epoch 37 | Step 400 | Loss 3.4570
+Epoch 37 | Step 450 | Loss 3.2889
+Epoch 37 | Step 500 | Loss 3.5364
+Epoch 37 | Step 550 | Loss 3.2857
+Epoch 37 | Step 600 | Loss 3.1874
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:12,  7.94it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:02, 35.05it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:01, 45.56it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 50.81it/s]Evaluating:  26%|██▋       | 26/99 [00:00<00:01, 54.44it/s]Evaluating:  32%|███▏      | 32/99 [00:00<00:01, 56.20it/s]Evaluating:  39%|███▉      | 39/99 [00:00<00:01, 57.71it/s]Evaluating:  46%|████▋     | 46/99 [00:00<00:00, 59.18it/s]Evaluating:  54%|█████▎    | 53/99 [00:00<00:00, 62.06it/s]Evaluating:  61%|██████    | 60/99 [00:01<00:00, 64.13it/s]Evaluating:  68%|██████▊   | 67/99 [00:01<00:00, 65.63it/s]Evaluating:  75%|███████▍  | 74/99 [00:01<00:00, 66.30it/s]Evaluating:  82%|████████▏ | 81/99 [00:01<00:00, 67.25it/s]Evaluating:  90%|████████▉ | 89/99 [00:01<00:00, 69.02it/s]Evaluating:  98%|█████████▊| 97/99 [00:01<00:00, 71.99it/s]                                                           Epoch 37 done | train_loss=3.3468 | val_loss=1.0212 | time=45.1s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch37.pt
+Epoch 38 | Step 0 | Loss 3.3770
+Epoch 38 | Step 50 | Loss 3.5056
+Epoch 38 | Step 100 | Loss 3.1164
+Epoch 38 | Step 150 | Loss 3.2760
+Epoch 38 | Step 200 | Loss 3.6386
+Epoch 38 | Step 250 | Loss 3.2621
+Epoch 38 | Step 300 | Loss 3.3280
+Epoch 38 | Step 350 | Loss 3.6503
+Epoch 38 | Step 400 | Loss 3.1129
+Epoch 38 | Step 450 | Loss 3.5883
+Epoch 38 | Step 500 | Loss 3.2984
+Epoch 38 | Step 550 | Loss 3.6444
+Epoch 38 | Step 600 | Loss 3.2288
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<00:15,  6.21it/s]Evaluating:   7%|▋         | 7/99 [00:00<00:03, 30.37it/s]Evaluating:  13%|█▎        | 13/99 [00:00<00:02, 41.66it/s]Evaluating:  19%|█▉        | 19/99 [00:00<00:01, 47.93it/s]Evaluating:  25%|██▌       | 25/99 [00:00<00:01, 51.88it/s]Evaluating:  32%|███▏      | 32/99 [00:00<00:01, 55.40it/s]Evaluating:  39%|███▉      | 39/99 [00:00<00:01, 59.65it/s]Evaluating:  46%|████▋     | 46/99 [00:00<00:00, 62.49it/s]Evaluating:  55%|█████▍    | 54/99 [00:01<00:00, 65.00it/s]Evaluating:  62%|██████▏   | 61/99 [00:01<00:00, 66.38it/s]Evaluating:  70%|██████▉   | 69/99 [00:01<00:00, 67.64it/s]Evaluating:  77%|███████▋  | 76/99 [00:01<00:00, 68.19it/s]Evaluating:  85%|████████▍ | 84/99 [00:01<00:00, 69.84it/s]Evaluating:  93%|█████████▎| 92/99 [00:01<00:00, 71.96it/s]                                                           Epoch 38 done | train_loss=3.3434 | val_loss=1.0195 | time=51.4s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch38.pt
+Epoch 39 | Step 0 | Loss 3.1153
+Epoch 39 | Step 50 | Loss 3.2034
+Epoch 39 | Step 100 | Loss 3.4716
+Epoch 39 | Step 150 | Loss 3.1754
+Epoch 39 | Step 200 | Loss 3.3080
+Epoch 39 | Step 250 | Loss 3.3100
+Epoch 39 | Step 300 | Loss 3.3795
+Epoch 39 | Step 350 | Loss 3.2389
+Epoch 39 | Step 400 | Loss 3.3592
+Epoch 39 | Step 450 | Loss 3.4434
+Epoch 39 | Step 500 | Loss 3.1375
+Epoch 39 | Step 550 | Loss 3.5276
+Epoch 39 | Step 600 | Loss 3.2852
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<01:00,  1.61it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:49,  1.95it/s]Evaluating:   9%|▉         | 9/99 [00:01<00:07, 11.46it/s]Evaluating:  16%|█▌        | 16/99 [00:01<00:03, 21.00it/s]Evaluating:  23%|██▎       | 23/99 [00:01<00:02, 30.07it/s]Evaluating:  30%|███       | 30/99 [00:01<00:01, 38.12it/s]Evaluating:  37%|███▋      | 37/99 [00:01<00:01, 44.96it/s]Evaluating:  44%|████▍     | 44/99 [00:01<00:01, 50.29it/s]Evaluating:  52%|█████▏    | 51/99 [00:01<00:00, 54.77it/s]Evaluating:  59%|█████▊    | 58/99 [00:01<00:00, 58.05it/s]Evaluating:  66%|██████▌   | 65/99 [00:02<00:00, 60.24it/s]Evaluating:  73%|███████▎  | 72/99 [00:02<00:00, 62.01it/s]Evaluating:  80%|███████▉  | 79/99 [00:02<00:00, 63.64it/s]Evaluating:  88%|████████▊ | 87/99 [00:02<00:00, 66.14it/s]Evaluating:  96%|█████████▌| 95/99 [00:02<00:00, 68.73it/s]                                                           Epoch 39 done | train_loss=3.3439 | val_loss=1.0196 | time=50.4s
+[Early Stopping] val_loss didn't improve (1.0196 >= 1.0195). Patience: 1/8
+Evaluating:   0%|          | 0/93 [00:00<?, ?it/s]Evaluating:   1%|          | 1/93 [00:00<00:47,  1.94it/s]Evaluating:   2%|▏         | 2/93 [00:00<00:42,  2.15it/s]Evaluating:   3%|▎         | 3/93 [00:01<00:41,  2.18it/s]Evaluating:   4%|▍         | 4/93 [00:01<00:41,  2.14it/s]Evaluating:   5%|▌         | 5/93 [00:02<00:41,  2.10it/s]Evaluating:   6%|▋         | 6/93 [00:02<00:42,  2.03it/s]Evaluating:   8%|▊         | 7/93 [00:03<00:43,  1.98it/s]Evaluating:   9%|▊         | 8/93 [00:03<00:43,  1.95it/s]Evaluating:  10%|▉         | 9/93 [00:04<00:40,  2.09it/s]Evaluating:  11%|█         | 10/93 [00:04<00:38,  2.17it/s]Evaluating:  12%|█▏        | 11/93 [00:05<00:37,  2.17it/s]Evaluating:  13%|█▎        | 12/93 [00:05<00:37,  2.16it/s]Evaluating:  14%|█▍        | 13/93 [00:06<00:37,  2.12it/s]Evaluating:  15%|█▌        | 14/93 [00:06<00:38,  2.05it/s]Evaluating:  16%|█▌        | 15/93 [00:07<00:39,  1.96it/s]Evaluating:  17%|█▋        | 16/93 [00:07<00:40,  1.92it/s]Evaluating:  18%|█▊        | 17/93 [00:08<00:36,  2.07it/s]Evaluating:  19%|█▉        | 18/93 [00:08<00:35,  2.14it/s]Evaluating:  20%|██        | 19/93 [00:09<00:34,  2.16it/s]Evaluating:  22%|██▏       | 20/93 [00:09<00:34,  2.13it/s]Evaluating:  23%|██▎       | 21/93 [00:10<00:34,  2.07it/s]Evaluating:  24%|██▎       | 22/93 [00:10<00:35,  2.02it/s]Evaluating:  25%|██▍       | 23/93 [00:11<00:36,  1.92it/s]Evaluating:  26%|██▌       | 24/93 [00:11<00:36,  1.89it/s]Evaluating:  27%|██▋       | 25/93 [00:12<00:33,  2.04it/s]Evaluating:  28%|██▊       | 26/93 [00:12<00:32,  2.08it/s]Evaluating:  29%|██▉       | 27/93 [00:13<00:31,  2.09it/s]Evaluating:  30%|███       | 28/93 [00:13<00:31,  2.06it/s]Evaluating:  31%|███       | 29/93 [00:14<00:31,  2.02it/s]Evaluating:  32%|███▏      | 30/93 [00:14<00:32,  1.93it/s]Evaluating:  33%|███▎      | 31/93 [00:15<00:33,  1.86it/s]Evaluating:  34%|███▍      | 32/93 [00:15<00:30,  2.02it/s]Evaluating:  35%|███▌      | 33/93 [00:16<00:28,  2.09it/s]Evaluating:  37%|███▋      | 34/93 [00:16<00:27,  2.11it/s]Evaluating:  38%|███▊      | 35/93 [00:17<00:27,  2.10it/s]Evaluating:  39%|███▊      | 36/93 [00:17<00:27,  2.05it/s]Evaluating:  40%|███▉      | 37/93 [00:18<00:28,  1.97it/s]Evaluating:  41%|████      | 38/93 [00:18<00:27,  1.97it/s]Evaluating:  42%|████▏     | 39/93 [00:18<00:25,  2.13it/s]Evaluating:  43%|████▎     | 40/93 [00:19<00:24,  2.18it/s]Evaluating:  44%|████▍     | 41/93 [00:19<00:24,  2.16it/s]Evaluating:  45%|████▌     | 42/93 [00:20<00:24,  2.11it/s]Evaluating:  46%|████▌     | 43/93 [00:20<00:24,  2.05it/s]Evaluating:  47%|████▋     | 44/93 [00:21<00:25,  1.92it/s]Evaluating:  48%|████▊     | 45/93 [00:21<00:23,  2.07it/s]Evaluating:  49%|████▉     | 46/93 [00:22<00:22,  2.13it/s]Evaluating:  51%|█████     | 47/93 [00:22<00:21,  2.12it/s]Evaluating:  52%|█████▏    | 48/93 [00:23<00:21,  2.08it/s]Evaluating:  53%|█████▎    | 49/93 [00:23<00:22,  2.00it/s]Evaluating:  54%|█████▍    | 50/93 [00:24<00:22,  1.94it/s]Evaluating:  55%|█████▍    | 51/93 [00:24<00:20,  2.09it/s]Evaluating:  56%|█████▌    | 52/93 [00:25<00:19,  2.14it/s]Evaluating:  57%|█████▋    | 53/93 [00:25<00:18,  2.16it/s]Evaluating:  58%|█████▊    | 54/93 [00:26<00:18,  2.08it/s]Evaluating:  59%|█████▉    | 55/93 [00:26<00:19,  2.00it/s]Evaluating:  60%|██████    | 56/93 [00:27<00:17,  2.15it/s]Evaluating:  61%|██████▏   | 57/93 [00:27<00:16,  2.17it/s]Evaluating:  62%|██████▏   | 58/93 [00:28<00:16,  2.10it/s]Evaluating:  63%|██████▎   | 59/93 [00:28<00:17,  2.00it/s]Evaluating:  65%|██████▍   | 60/93 [00:29<00:15,  2.09it/s]Evaluating:  66%|██████▌   | 61/93 [00:29<00:14,  2.19it/s]Evaluating:  67%|██████▋   | 62/93 [00:30<00:14,  2.16it/s]Evaluating:  68%|██████▊   | 63/93 [00:30<00:14,  2.06it/s]Evaluating:  69%|██████▉   | 64/93 [00:31<00:14,  1.97it/s]Evaluating:  70%|██████▉   | 65/93 [00:31<00:13,  2.08it/s]Evaluating:  71%|███████   | 66/93 [00:31<00:12,  2.10it/s]Evaluating:  72%|███████▏  | 67/93 [00:32<00:13,  1.99it/s]Evaluating:  73%|███████▎  | 68/93 [00:33<00:12,  1.97it/s]Evaluating:  74%|███████▍  | 69/93 [00:33<00:11,  2.04it/s]Evaluating:  75%|███████▌  | 70/93 [00:34<00:11,  2.03it/s]Evaluating:  76%|███████▋  | 71/93 [00:34<00:11,  1.97it/s]Evaluating:  77%|███████▋  | 72/93 [00:34<00:10,  2.05it/s]Evaluating:  78%|███████▊  | 73/93 [00:35<00:10,  1.99it/s]Evaluating:  80%|███████▉  | 74/93 [00:36<00:09,  2.00it/s]Evaluating:  81%|████████  | 75/93 [00:36<00:08,  2.10it/s]Evaluating:  82%|████████▏ | 76/93 [00:36<00:08,  2.07it/s]Evaluating:  83%|████████▎ | 77/93 [00:37<00:07,  2.06it/s]Evaluating:  84%|████████▍ | 78/93 [00:37<00:07,  2.04it/s]Evaluating:  85%|████████▍ | 79/93 [00:38<00:06,  2.01it/s]Evaluating:  86%|████████▌ | 80/93 [00:38<00:06,  2.06it/s]Evaluating:  87%|████████▋ | 81/93 [00:39<00:06,  1.99it/s]Evaluating:  88%|████████▊ | 82/93 [00:40<00:05,  1.90it/s]Evaluating:  89%|████████▉ | 83/93 [00:40<00:05,  1.97it/s]Evaluating:  90%|█████████ | 84/93 [00:40<00:04,  2.09it/s]Evaluating:  91%|█████████▏| 85/93 [00:41<00:03,  2.16it/s]Evaluating:  92%|█████████▏| 86/93 [00:41<00:03,  2.22it/s]Evaluating:  94%|█████████▎| 87/93 [00:42<00:02,  2.26it/s]Evaluating:  95%|█████████▍| 88/93 [00:42<00:02,  2.38it/s]Evaluating:  96%|█████████▌| 89/93 [00:42<00:01,  2.53it/s]Evaluating:  97%|█████████▋| 90/93 [00:43<00:01,  2.58it/s]Evaluating:  98%|█████████▊| 91/93 [00:43<00:00,  2.72it/s]Evaluating:  99%|█████████▉| 92/93 [00:43<00:00,  2.92it/s]                                                           wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading output.log; uploading wandb-summary.json; uploading history steps 560-560, summary, console lines 606-615
+wandb: uploading output.log; uploading wandb-summary.json
+wandb: uploading output.log
+wandb: 
+wandb: Run history:
+wandb:             epoch ▁▁▁▂▂▃▃▃▃▃▄▄▄▄▄▄▄▅▅▅▅▅▅▅▆▆▆▆▆▆▆▆▇▇▇▇▇███
+wandb: perf/epoch_time_s ▃▂▂▁█▄▁▂▁▁▂▁▄▅▁▂▃▁▁▁▂▁▁▁▁▂▁▁▁▁▂▁▁▁▁▂▁▁▆▅
+wandb:     perf/n_params ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:              step ▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▃▃▄▄▄▅▅▅▆▆▆▆▆▇▇▇▇▇███████
+wandb: test/bit_accuracy ▁
+wandb:         test/bleu ▁
+wandb:  test/levenshtein ▁
+wandb:       test/rouge1 ▁
+wandb:       test/rouge2 ▁
+wandb:       test/rougeL ▁
+wandb:               +12 ...
+wandb: 
+wandb: Run summary:
+wandb:             epoch 39
+wandb: perf/epoch_time_s 50.38191
+wandb:     perf/n_params 10986888
+wandb:              step 25920
+wandb: test/bit_accuracy 0.28479
+wandb:         test/bleu 0.55393
+wandb:  test/levenshtein 32.65863
+wandb:       test/rouge1 0.7156
+wandb:       test/rouge2 0.59472
+wandb:       test/rougeL 0.69739
+wandb:               +12 ...
+wandb: 
+wandb: 🚀 View run run-C1-bpew at: https://wandb.ai/yash-more1224-international-institute-of-information-tec/anlp-assignment-1/runs/fbzrj6zs
+wandb: ⭐️ View project at: https://wandb.ai/yash-more1224-international-institute-of-information-tec/anlp-assignment-1
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260828_193847-fbzrj6zs/logs
+
+=== TEST RESULTS ===
+  val_loss: 1.0156
+  bit_accuracy: 0.2848
+  seq_accuracy: 0.0313
+  levenshtein: 32.6586
+  bleu: 0.5539
+  rouge1: 0.7156
+  rouge2: 0.5947
+  rougeL: 0.6974

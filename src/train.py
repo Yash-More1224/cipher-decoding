@@ -39,7 +39,10 @@ from huggingface_hub import HfApi, upload_folder
 from tqdm import tqdm
 
 # Project imports
-from src.dataset import EncryptedDataset, TokenFreeDataset
+from src.dataset import (
+    EncryptedDataset, TokenFreeDataset, collate_encrypted,
+    LengthGroupedSampler, TokenBudgetBatchSampler,
+)
 from src.models.attention import MultiHeadAttention, GroupedQueryAttention
 from src.models.norm import LayerNorm, RMSNorm
 from src.models.positional import SinusoidalPositionalEncoding, get_rotary_matrix
@@ -473,38 +476,71 @@ def main():
                         choices=["C1", "C2", "C3", "C4", "C5"])
 
     # Training
-    parser.add_argument("--epochs",     type=int,   default=50)
-    parser.add_argument("--batch_size", type=int,   default=20,
+    parser.add_argument("--epochs",     type=int,   default=40)
+    parser.add_argument("--batch_size", type=int,   default=16,
                         help="Per-GPU micro-batch size (total = batch_size × n_GPUs)")
-    parser.add_argument("--lr",              type=float, default=1.5e-3)
-    parser.add_argument("--warmup_ratio",    type=float, default=0.05,
+    parser.add_argument("--lr",              type=float, default=7e-4,
+                        help="Tuned for effective batch 16 (sqrt-scaled down from the "
+                             "1.5e-3 that was tuned at effective batch 240).")
+    parser.add_argument("--warmup_ratio",    type=float, default=0.1,
                         help="Fraction of total steps used for linear LR warmup.")
-    parser.add_argument("--grad_accum_steps", type=int,   default=3,
+    parser.add_argument("--grad_accum_steps", type=int,   default=1,
                         help="Accumulate gradients over N mini-batches before stepping optimizer. "
-                             "Effective batch = batch_size * n_GPUs * grad_accum_steps.")
+                             "Effective batch = batch_size * n_GPUs * grad_accum_steps. "
+                             "Kept at 1: without chunking there are only 4k training lines, so "
+                             "optimizer steps are scarce and accumulation spends them.")
     parser.add_argument("--seed",            type=int,   default=42)
 
     # Model
     parser.add_argument("--d_model",      type=int,   default=256)
     parser.add_argument("--n_heads",      type=int,   default=8)
     parser.add_argument("--d_ff",         type=int,   default=1024)
-    parser.add_argument("--num_layers",   type=int,   default=6)
-    parser.add_argument("--max_seq_len",  type=int,   default=850,
-                        help="Sequence length (for C1–C4 only)")
+    parser.add_argument("--num_layers",   type=int,   default=4,
+                        help="4 encoder + 4 decoder blocks (~11M params with the BPE "
+                             "cipher vocabulary; 6+6 would be ~14.6M).")
+    parser.add_argument("--max_seq_len",  type=int,   default=1408,
+                        help="Safety cap for C1-C4. Dynamic padding means batches pad to "
+                             "their own longest member (~300), so a high cap is nearly free. "
+                             "Longest observed line needs 1385.")
     parser.add_argument("--dropout",      type=float, default=0.3)
+    # These were hardcoded at 0.3/0.05/0.2, tuned when the model OVERFIT ~40k
+    # chunks. Without chunking there are 4k lines and the model underfits, so
+    # they need to be tunable rather than fixed.
+    parser.add_argument("--weight_decay",    type=float, default=0.05)
+    parser.add_argument("--label_smoothing", type=float, default=0.2)
 
     # BLT-specific
+    parser.add_argument("--zero_offset", action="store_true",
+                        help="Withhold the absolute window offset from the positional "
+                             "encoding (encode every window as starting at 0). See the "
+                             "note at the training loop for why it is uninformative here.")
     parser.add_argument("--patch_size",      type=int, default=8)
     parser.add_argument("--n_local_layers",  type=int, default=1)
     parser.add_argument("--n_global_layers", type=int, default=4)
 
-    # Chunked training (C1-C4 only)
+    # Chunking. C5 (BLT) only: C1-C4 are segmented by the learned BPE tokenizer
+    # and ignore this flag entirely (see the DataLoader section).
     parser.add_argument("--chunk_size", type=int, default=64,
-                        help="Segment each cipher/plain line into non-overlapping chunks of "
-                             "this many bytes. 0 = no chunking (original per-line behaviour). "
-                             "E.g. 64 turns 4k lines into ~50k training samples.")
+                        help="C5 only: segment each line into non-overlapping windows of this "
+                             "many characters. Ignored for C1-C4, which never chunk.")
 
     # WandB
+    parser.add_argument("--no_save", action="store_true",
+                        help="Do not write checkpoints. For short profiling runs whose only "
+                             "purpose is measuring speed/memory, so they cannot disturb the "
+                             "trained checkpoints eval auto-detection relies on.")
+    parser.add_argument("--patience", type=int, default=8,
+                        help="Early-stopping patience in epochs. Raised from 4: with only "
+                             "4k training lines and a harder (BPE-tokenized) cipher, short "
+                             "plateaus are common and a premature stop wastes the run.")
+    parser.add_argument("--max_tokens", type=int, default=4096,
+                        help="C1-C4: max padded positions per batch. Batch size adapts to "
+                             "sequence length so the longest lines cannot OOM. Raise if "
+                             "GPU memory allows; lower if you still hit OOM.")
+    parser.add_argument("--run_name", type=str, default="",
+                        help="W&B run name. Defaults to run-<config>. Set this so a new "
+                             "round of runs does not collide with earlier ones of the "
+                             "same config in the same project.")
     parser.add_argument("--wandb_project", type=str, default="anlp-assignment-1")
     parser.add_argument("--wandb_entity",  type=str, default="")
 
@@ -535,11 +571,14 @@ def main():
         wandb.init(
             project=args.wandb_project,
             entity=args.wandb_entity or None,
-            name=f"run-{args.config}",
+            name=args.run_name or f"run-{args.config}",
             config=vars(args),
         )
 
     # ── Dataset & DataLoaders ──────────────────────────────────────────────
+    # C5 (BLT) still chunks: one token per bit means a full line runs to ~21k
+    # positions, which does not fit quadratic attention on an 11 GB card.
+    # C1-C4 never chunk — the learned BPE tokenizer does all the segmenting.
     if is_blt:
         train_ds, val_ds, test_ds = TokenFreeDataset.split(
             max_src_len=args.max_seq_len * 8 + 4,
@@ -555,21 +594,77 @@ def main():
     train_sampler = DistributedSampler(train_ds) if dist.is_initialized() else None
     val_sampler   = DistributedSampler(val_ds,  shuffle=False) if dist.is_initialized() else None
 
-    train_loader = DataLoader(
-        train_ds, batch_size=args.batch_size,
-        sampler=train_sampler, shuffle=(train_sampler is None),
-        num_workers=2, pin_memory=True,
-    )
-    val_loader = DataLoader(
-        val_ds, batch_size=args.batch_size,
-        sampler=val_sampler, shuffle=False,
-        num_workers=2, pin_memory=True,
-    )
-    # Test loader (no DDP sampler — evaluate on full set on rank 0)
-    test_loader = DataLoader(
-        test_ds, batch_size=args.batch_size, shuffle=False,
-        num_workers=2, pin_memory=True,
-    )
+    # C1-C4 pad per batch instead of to a global max, and batch by TOKEN budget
+    # rather than sequence count. Attention memory scales with batch * len^2, so
+    # a fixed batch size OOMs on the rare ~1,383-token lines even though the mean
+    # is ~296; budgeting tokens lets long lines batch narrow automatically.
+    if is_blt and args.chunk_size > 0:
+        # C5 shares C1-C4's sampler so the ablation stays controlled: same
+        # windows per batch, same batches per epoch, same offset grouping.
+        #
+        # max_tokens is deliberately disabled here. C5's encoder sequence is a
+        # fixed chunk_size*8+2 positions, roughly 8x a BPE window, so an equal
+        # token budget would give C5 ~7 windows per batch against C1-C4's 64 and
+        # multiply its optimizer steps per epoch by ~8.7. Sequence count is the
+        # quantity that has to match, so batching is capped by max_batch alone.
+        blt_batch = dict(max_tokens=10**9, max_batch=args.batch_size,
+                         group_by_offset=True)
+        train_sampler = TokenBudgetBatchSampler(
+            train_ds, shuffle=True, seed=args.seed, **blt_batch)
+        train_loader = DataLoader(
+            train_ds, batch_sampler=train_sampler, num_workers=2, pin_memory=True)
+        val_loader = DataLoader(
+            val_ds, batch_sampler=TokenBudgetBatchSampler(
+                val_ds, shuffle=False, **blt_batch),
+            num_workers=2, pin_memory=True)
+        test_loader = DataLoader(
+            test_ds, batch_sampler=TokenBudgetBatchSampler(
+                test_ds, shuffle=False, **blt_batch),
+            num_workers=2, pin_memory=True)
+        if is_main():
+            print(f"[Batching] C5 fixed batch {args.batch_size}, offset-grouped -> "
+                  f"{len(train_sampler)} train batches/epoch")
+    elif is_blt:
+        train_loader = DataLoader(
+            train_ds, batch_size=args.batch_size,
+            sampler=train_sampler, shuffle=(train_sampler is None),
+            num_workers=2, pin_memory=True,
+        )
+        val_loader = DataLoader(
+            val_ds, batch_size=args.batch_size, sampler=val_sampler,
+            shuffle=False, num_workers=2, pin_memory=True,
+        )
+        test_loader = DataLoader(
+            test_ds, batch_size=args.batch_size, shuffle=False,
+            num_workers=2, pin_memory=True,
+        )
+    else:
+        # Windowed mode: batches must be offset-homogeneous, because the model
+        # is given one scalar offset per batch.
+        grp = args.chunk_size > 0
+        train_sampler = TokenBudgetBatchSampler(
+            train_ds, max_tokens=args.max_tokens, shuffle=True, seed=args.seed,
+            group_by_offset=grp,
+        )
+        train_loader = DataLoader(
+            train_ds, batch_sampler=train_sampler,
+            num_workers=2, pin_memory=True, collate_fn=collate_encrypted,
+        )
+        val_loader = DataLoader(
+            val_ds,
+            batch_sampler=TokenBudgetBatchSampler(
+                val_ds, max_tokens=args.max_tokens, shuffle=False, group_by_offset=grp),
+            num_workers=2, pin_memory=True, collate_fn=collate_encrypted,
+        )
+        test_loader = DataLoader(
+            test_ds,
+            batch_sampler=TokenBudgetBatchSampler(
+                test_ds, max_tokens=args.max_tokens, shuffle=False, group_by_offset=grp),
+            num_workers=2, pin_memory=True, collate_fn=collate_encrypted,
+        )
+        if is_main():
+            print(f"[Batching] token budget {args.max_tokens}/batch -> "
+                  f"{len(train_sampler)} train batches/epoch")
 
     if is_main():
         print(f"[Dataset] train={len(train_ds)} | val={len(val_ds)} | test={len(test_ds)}")
@@ -625,7 +720,7 @@ def main():
         print(f"[Model] Config={args.config} | Parameters={n_params:,}")
 
     # ── Optimizer & Loss ──────────────────────────────────────────────────
-    optimizer = optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.98), eps=1e-9, weight_decay=0.05)
+    optimizer = optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.98), eps=1e-9, weight_decay=args.weight_decay)
     
     # Calculate total training steps for the scheduler
     steps_per_epoch = len(train_loader)
@@ -645,7 +740,7 @@ def main():
     )
     
     # Label smoothing prevents the model from becoming overconfident (helps generalization)
-    criterion = nn.CrossEntropyLoss(ignore_index=train_ds.pad_id_plain, label_smoothing=0.2)
+    criterion = nn.CrossEntropyLoss(ignore_index=train_ds.pad_id_plain, label_smoothing=args.label_smoothing)
     
     # Automatic Mixed Precision (AMP) scaler for fp16 training
     scaler = torch.amp.GradScaler("cuda")
@@ -657,7 +752,7 @@ def main():
     # Early Stopping state
     best_val_loss = float('inf')
     patience_counter = 0
-    patience_limit = 4
+    patience_limit = args.patience
     last_4_checkpoints = []
 
     if args.resume:
@@ -710,9 +805,30 @@ def main():
 
         for step, batch in enumerate(train_loader):
             src, tgt, offsets = batch[0].to(device), batch[1].to(device), batch[2]
-            # All samples in a batch may have different offsets; we take the min
-            # so the positional encoding is conservative (shifts toward the true start).
-            src_offset = int(offsets.min().item())
+            # The model takes ONE scalar offset per batch, so a batch carrying
+            # several different window offsets cannot be represented exactly.
+            #
+            # C1-C4 solve this properly: TokenBudgetBatchSampler is built with
+            # group_by_offset=True, so every batch is offset-homogeneous and the
+            # scalar below is the true offset for every sample in it.
+            #
+            # Every configuration is batched with group_by_offset=True, so this
+            # scalar is the exact offset shared by every sample in the batch
+            # rather than an approximation.
+            if offsets.numel() and int(offsets.max()) != int(offsets.min()):
+                raise RuntimeError(
+                    f"Mixed offsets in one batch ({int(offsets.min())}..{int(offsets.max())}). "
+                    "Batches must be offset-homogeneous; use group_by_offset=True."
+                )
+            # --zero_offset withholds the absolute window offset from the
+            # positional encoding, so every window is encoded as if it began at
+            # position 0. The offset cannot change which key byte applies (window
+            # starts are multiples of the chunk size, itself a multiple of the
+            # 8-bit block), so it is uninformative for the mapping. With absolute
+            # positional encoding it is worse than uninformative: the same content
+            # appears under as many distinct encodings as there are offsets, and
+            # the model must learn to be invariant to a shift that never mattered.
+            src_offset = 0 if args.zero_offset else int(offsets.min().item())
 
             is_accumulating = (step + 1) % args.grad_accum_steps != 0
 
@@ -770,6 +886,10 @@ def main():
                 "epoch":          epoch,
                 "step":           global_step,
                 "train/avg_loss": avg_train_loss,
+                # Logged explicitly rather than derived from _runtime/n_epochs,
+                # which folds in startup, eval and checkpoint-saving overhead.
+                "perf/epoch_time_s": epoch_time,
+                "perf/n_params":     n_params,
             }
             if val_metrics:
                 for k, v in val_metrics.items():
@@ -782,7 +902,11 @@ def main():
             if current_val_loss < best_val_loss:
                 best_val_loss = current_val_loss
                 patience_counter = 0
-                
+
+                if args.no_save:
+                    print(f"[Checkpoint] Skipped (--no_save), val_loss={current_val_loss:.4f}")
+                    continue
+
                 ckpt_path = f"outputs/checkpoint_{args.config}_epoch{epoch:02d}.pt"
                 raw_model = model.module if isinstance(model, DDP) else model
                 torch.save(

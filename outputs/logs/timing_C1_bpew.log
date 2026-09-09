@@ -1,0 +1,90 @@
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home2/yash.more/.netrc.
+wandb: Currently logged in as: yash-more1224 (yash-more1224-international-institute-of-information-tec) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run uop7ioh4
+wandb: Tracking run with wandb version 0.28.2
+wandb: Run data is saved locally in /home2/yash.more/anlp/a1/wandb/run-20260828_192909-uop7ioh4
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run run-C1-bpew-timing
+wandb: ⭐️ View project at https://wandb.ai/yash-more1224-international-institute-of-information-tec/anlp-assignment-1
+wandb: 🚀 View run at https://wandb.ai/yash-more1224-international-institute-of-information-tec/anlp-assignment-1/runs/uop7ioh4
+[Batching] token budget 4096/batch -> 648 train batches/epoch
+[Dataset] train=39683 | val=4685 | test=4782
+[Model] Config=C1 | Parameters=10,986,888
+/home2/yash.more/miniconda3/envs/totto/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:243: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+Epoch 0 | Step 0 | Loss 8.7398
+Epoch 0 | Step 50 | Loss 6.7427
+Epoch 0 | Step 100 | Loss 6.5412
+Epoch 0 | Step 150 | Loss 6.1950
+Epoch 0 | Step 200 | Loss 6.2291
+Epoch 0 | Step 250 | Loss 5.9880
+Epoch 0 | Step 300 | Loss 6.0211
+Epoch 0 | Step 350 | Loss 5.7928
+Epoch 0 | Step 400 | Loss 5.7899
+Epoch 0 | Step 450 | Loss 5.8423
+Epoch 0 | Step 500 | Loss 5.8759
+Epoch 0 | Step 550 | Loss 5.9966
+Epoch 0 | Step 600 | Loss 5.6789
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<01:05,  1.49it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:50,  1.91it/s]Evaluating:   9%|▉         | 9/99 [00:01<00:07, 11.34it/s]Evaluating:  16%|█▌        | 16/99 [00:01<00:03, 21.01it/s]Evaluating:  24%|██▍       | 24/99 [00:01<00:02, 31.42it/s]Evaluating:  31%|███▏      | 31/99 [00:01<00:01, 39.50it/s]Evaluating:  39%|███▉      | 39/99 [00:01<00:01, 47.33it/s]Evaluating:  47%|████▋     | 47/99 [00:01<00:00, 53.41it/s]Evaluating:  56%|█████▌    | 55/99 [00:01<00:00, 58.05it/s]Evaluating:  63%|██████▎   | 62/99 [00:01<00:00, 61.04it/s]Evaluating:  71%|███████   | 70/99 [00:02<00:00, 63.84it/s]Evaluating:  79%|███████▉  | 78/99 [00:02<00:00, 65.87it/s]Evaluating:  87%|████████▋ | 86/99 [00:02<00:00, 67.68it/s]Evaluating:  95%|█████████▍| 94/99 [00:02<00:00, 69.89it/s]                                                           Epoch 0 done | train_loss=6.1424 | val_loss=4.6691 | time=46.8s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch00.pt
+Epoch 1 | Step 0 | Loss 5.7585
+Epoch 1 | Step 50 | Loss 5.7905
+Epoch 1 | Step 100 | Loss 5.7617
+Epoch 1 | Step 150 | Loss 5.6379
+Epoch 1 | Step 200 | Loss 5.7288
+Epoch 1 | Step 250 | Loss 5.9542
+Epoch 1 | Step 300 | Loss 5.5268
+Epoch 1 | Step 350 | Loss 5.9532
+Epoch 1 | Step 400 | Loss 5.6387
+Epoch 1 | Step 450 | Loss 5.6650
+Epoch 1 | Step 500 | Loss 5.7671
+Epoch 1 | Step 550 | Loss 5.6069
+Epoch 1 | Step 600 | Loss 5.6574
+Evaluating:   0%|          | 0/99 [00:00<?, ?it/s]Evaluating:   1%|          | 1/99 [00:00<01:03,  1.55it/s]Evaluating:   2%|▏         | 2/99 [00:01<00:52,  1.84it/s]Evaluating:  10%|█         | 10/99 [00:01<00:07, 12.07it/s]Evaluating:  18%|█▊        | 18/99 [00:01<00:03, 22.35it/s]Evaluating:  26%|██▋       | 26/99 [00:01<00:02, 32.11it/s]Evaluating:  33%|███▎      | 33/99 [00:01<00:01, 38.96it/s]Evaluating:  41%|████▏     | 41/99 [00:01<00:01, 46.57it/s]Evaluating:  48%|████▊     | 48/99 [00:01<00:00, 51.97it/s]Evaluating:  57%|█████▋    | 56/99 [00:01<00:00, 56.95it/s]Evaluating:  64%|██████▎   | 63/99 [00:01<00:00, 60.19it/s]Evaluating:  71%|███████   | 70/99 [00:02<00:00, 62.70it/s]Evaluating:  79%|███████▉  | 78/99 [00:02<00:00, 64.94it/s]Evaluating:  87%|████████▋ | 86/99 [00:02<00:00, 67.23it/s]Evaluating:  95%|█████████▍| 94/99 [00:02<00:00, 69.66it/s]                                                           Epoch 1 done | train_loss=5.6824 | val_loss=4.5167 | time=47.2s
+[Checkpoint] Saved → outputs/checkpoint_C1_epoch01.pt
+Evaluating:   0%|          | 0/93 [00:00<?, ?it/s]Evaluating:   1%|          | 1/93 [00:00<01:02,  1.46it/s]Evaluating:   2%|▏         | 2/93 [00:01<00:49,  1.82it/s]Evaluating:   3%|▎         | 3/93 [00:01<00:45,  1.98it/s]Evaluating:   4%|▍         | 4/93 [00:02<00:43,  2.03it/s]Evaluating:   5%|▌         | 5/93 [00:02<00:43,  2.02it/s]Evaluating:   6%|▋         | 6/93 [00:03<00:43,  1.99it/s]Evaluating:   8%|▊         | 7/93 [00:03<00:43,  1.97it/s]Evaluating:   9%|▊         | 8/93 [00:04<00:43,  1.97it/s]Evaluating:  10%|▉         | 9/93 [00:04<00:39,  2.11it/s]Evaluating:  11%|█         | 10/93 [00:04<00:38,  2.18it/s]Evaluating:  12%|█▏        | 11/93 [00:05<00:37,  2.19it/s]Evaluating:  13%|█▎        | 12/93 [00:05<00:37,  2.18it/s]Evaluating:  14%|█▍        | 13/93 [00:06<00:37,  2.13it/s]Evaluating:  15%|█▌        | 14/93 [00:06<00:38,  2.08it/s]Evaluating:  16%|█▌        | 15/93 [00:07<00:38,  2.04it/s]Evaluating:  17%|█▋        | 16/93 [00:07<00:37,  2.07it/s]Evaluating:  18%|█▊        | 17/93 [00:08<00:34,  2.20it/s]Evaluating:  19%|█▉        | 18/93 [00:08<00:33,  2.26it/s]Evaluating:  20%|██        | 19/93 [00:09<00:32,  2.26it/s]Evaluating:  22%|██▏       | 20/93 [00:09<00:32,  2.22it/s]Evaluating:  23%|██▎       | 21/93 [00:10<00:33,  2.13it/s]Evaluating:  24%|██▎       | 22/93 [00:10<00:34,  2.08it/s]Evaluating:  25%|██▍       | 23/93 [00:11<00:35,  1.98it/s]Evaluating:  26%|██▌       | 24/93 [00:11<00:35,  1.93it/s]Evaluating:  27%|██▋       | 25/93 [00:12<00:32,  2.09it/s]Evaluating:  28%|██▊       | 26/93 [00:12<00:31,  2.15it/s]Evaluating:  29%|██▉       | 27/93 [00:12<00:30,  2.19it/s]Evaluating:  30%|███       | 28/93 [00:13<00:30,  2.17it/s]Evaluating:  31%|███       | 29/93 [00:13<00:30,  2.12it/s]Evaluating:  32%|███▏      | 30/93 [00:14<00:30,  2.05it/s]Evaluating:  33%|███▎      | 31/93 [00:14<00:31,  1.97it/s]Evaluating:  34%|███▍      | 32/93 [00:15<00:28,  2.12it/s]Evaluating:  35%|███▌      | 33/93 [00:15<00:27,  2.17it/s]Evaluating:  37%|███▋      | 34/93 [00:16<00:27,  2.18it/s]Evaluating:  38%|███▊      | 35/93 [00:16<00:26,  2.16it/s]Evaluating:  39%|███▊      | 36/93 [00:17<00:27,  2.09it/s]Evaluating:  40%|███▉      | 37/93 [00:17<00:27,  2.05it/s]Evaluating:  41%|████      | 38/93 [00:18<00:26,  2.09it/s]Evaluating:  42%|████▏     | 39/93 [00:18<00:24,  2.23it/s]Evaluating:  43%|████▎     | 40/93 [00:19<00:23,  2.26it/s]Evaluating:  44%|████▍     | 41/93 [00:19<00:23,  2.24it/s]Evaluating:  45%|████▌     | 42/93 [00:19<00:23,  2.19it/s]Evaluating:  46%|████▌     | 43/93 [00:20<00:23,  2.12it/s]Evaluating:  47%|████▋     | 44/93 [00:20<00:23,  2.07it/s]Evaluating:  48%|████▊     | 45/93 [00:21<00:21,  2.20it/s]Evaluating:  49%|████▉     | 46/93 [00:21<00:21,  2.24it/s]Evaluating:  51%|█████     | 47/93 [00:22<00:20,  2.20it/s]Evaluating:  52%|█████▏    | 48/93 [00:22<00:20,  2.16it/s]Evaluating:  53%|█████▎    | 49/93 [00:23<00:21,  2.06it/s]Evaluating:  54%|█████▍    | 50/93 [00:23<00:20,  2.10it/s]Evaluating:  55%|█████▍    | 51/93 [00:24<00:18,  2.24it/s]Evaluating:  56%|█████▌    | 52/93 [00:24<00:18,  2.27it/s]Evaluating:  57%|█████▋    | 53/93 [00:24<00:17,  2.26it/s]Evaluating:  58%|█████▊    | 54/93 [00:25<00:18,  2.17it/s]Evaluating:  59%|█████▉    | 55/93 [00:26<00:18,  2.06it/s]Evaluating:  60%|██████    | 56/93 [00:26<00:16,  2.21it/s]Evaluating:  61%|██████▏   | 57/93 [00:26<00:16,  2.22it/s]Evaluating:  62%|██████▏   | 58/93 [00:27<00:16,  2.16it/s]Evaluating:  63%|██████▎   | 59/93 [00:27<00:16,  2.09it/s]Evaluating:  65%|██████▍   | 60/93 [00:28<00:15,  2.17it/s]Evaluating:  66%|██████▌   | 61/93 [00:28<00:14,  2.26it/s]Evaluating:  67%|██████▋   | 62/93 [00:29<00:14,  2.21it/s]Evaluating:  68%|██████▊   | 63/93 [00:29<00:14,  2.11it/s]Evaluating:  69%|██████▉   | 64/93 [00:30<00:13,  2.10it/s]Evaluating:  70%|██████▉   | 65/93 [00:30<00:12,  2.19it/s]Evaluating:  71%|███████   | 66/93 [00:31<00:12,  2.18it/s]Evaluating:  72%|███████▏  | 67/93 [00:31<00:12,  2.11it/s]Evaluating:  73%|███████▎  | 68/93 [00:31<00:11,  2.15it/s]Evaluating:  74%|███████▍  | 69/93 [00:32<00:10,  2.19it/s]Evaluating:  75%|███████▌  | 70/93 [00:32<00:10,  2.15it/s]Evaluating:  76%|███████▋  | 71/93 [00:33<00:10,  2.06it/s]Evaluating:  77%|███████▋  | 72/93 [00:33<00:09,  2.12it/s]Evaluating:  78%|███████▊  | 73/93 [00:34<00:09,  2.05it/s]Evaluating:  80%|███████▉  | 74/93 [00:34<00:08,  2.12it/s]Evaluating:  81%|████████  | 75/93 [00:35<00:08,  2.20it/s]Evaluating:  82%|████████▏ | 76/93 [00:35<00:07,  2.15it/s]Evaluating:  83%|████████▎ | 77/93 [00:36<00:07,  2.13it/s]Evaluating:  84%|████████▍ | 78/93 [00:36<00:07,  2.09it/s]Evaluating:  85%|████████▍ | 79/93 [00:37<00:06,  2.07it/s]Evaluating:  86%|████████▌ | 80/93 [00:37<00:06,  2.12it/s]Evaluating:  87%|████████▋ | 81/93 [00:38<00:05,  2.10it/s]Evaluating:  88%|████████▊ | 82/93 [00:38<00:05,  2.10it/s]Evaluating:  89%|████████▉ | 83/93 [00:39<00:04,  2.14it/s]Evaluating:  90%|█████████ | 84/93 [00:39<00:04,  2.24it/s]Evaluating:  91%|█████████▏| 85/93 [00:39<00:03,  2.28it/s]Evaluating:  92%|█████████▏| 86/93 [00:40<00:02,  2.33it/s]Evaluating:  94%|█████████▎| 87/93 [00:40<00:02,  2.36it/s]Evaluating:  95%|█████████▍| 88/93 [00:41<00:02,  2.48it/s]Evaluating:  96%|█████████▌| 89/93 [00:41<00:01,  2.63it/s]Evaluating:  97%|█████████▋| 90/93 [00:41<00:01,  2.78it/s]Evaluating:  98%|█████████▊| 91/93 [00:42<00:00,  2.89it/s]Evaluating:  99%|█████████▉| 92/93 [00:42<00:00,  3.08it/s]                                                           wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading wandb-summary.json; uploading config.yaml
+wandb: uploading history steps 28-28, summary, console lines 18-18
+wandb: uploading console lines 33-45
+wandb: 
+wandb: Run history:
+wandb:             epoch ▁▁▁▁▁▁▁▁▁▁▁▁▁▁██████████████
+wandb: perf/epoch_time_s ▁█
+wandb:     perf/n_params ▁▁
+wandb:              step ▁▁▂▂▂▂▃▃▃▃▄▄▄▄▅▅▅▅▆▆▆▆▇▇▇▇██
+wandb: test/bit_accuracy ▁
+wandb:         test/bleu ▁
+wandb:  test/levenshtein ▁
+wandb:       test/rouge1 ▁
+wandb:       test/rouge2 ▁
+wandb:       test/rougeL ▁
+wandb:               +12 ...
+wandb: 
+wandb: Run summary:
+wandb:             epoch 1
+wandb: perf/epoch_time_s 47.1948
+wandb:     perf/n_params 10986888
+wandb:              step 1296
+wandb: test/bit_accuracy 0.03222
+wandb:         test/bleu 0.16932
+wandb:  test/levenshtein 53.66523
+wandb:       test/rouge1 0.37266
+wandb:       test/rouge2 0.18501
+wandb:       test/rougeL 0.32546
+wandb:               +12 ...
+wandb: 
+wandb: 🚀 View run run-C1-bpew-timing at: https://wandb.ai/yash-more1224-international-institute-of-information-tec/anlp-assignment-1/runs/uop7ioh4
+wandb: ⭐️ View project at: https://wandb.ai/yash-more1224-international-institute-of-information-tec/anlp-assignment-1
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260828_192909-uop7ioh4/logs
+
+=== TEST RESULTS ===
+  val_loss: 4.5132
+  bit_accuracy: 0.0322
+  seq_accuracy: 0.0000
+  levenshtein: 53.6652
+  bleu: 0.1693
+  rouge1: 0.3727
+  rouge2: 0.1850
+  rougeL: 0.3255

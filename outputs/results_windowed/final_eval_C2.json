@@ -1,0 +1,12 @@
+{
+  "config": "C2",
+  "checkpoint": "outputs/checkpoint_C2_epoch70.pt",
+  "n_lines": 500,
+  "char_accuracy": 0.5213449708258991,
+  "seq_accuracy": 0.25,
+  "levenshtein": 6.566,
+  "bleu": 0.9456494125087835,
+  "rouge1": 0.9768328076084063,
+  "rouge2": 0.9570832210286528,
+  "rougeL": 0.9768057258343712
+}

@@ -30,6 +30,7 @@ def greedy_decode(
     bos_id: int = 1,
     eos_id: int = 2,
     dataset=None,
+    src_offset: int = 0,
 ) -> torch.Tensor:
     """
     Autoregressive greedy decoding.
@@ -73,9 +74,10 @@ def greedy_decode(
     for _ in range(max_len - 1):
         # Forward pass — get logits for the full current prefix
         if is_blt:
-            logits = model(src, tgt, pad_idx_src=src_pad_idx, pad_idx_tgt=tgt_pad_idx)
+            logits = model(src, tgt, pad_idx_src=src_pad_idx, pad_idx_tgt=tgt_pad_idx,
+                           src_offset=src_offset)
         else:
-            logits = model(src, tgt, src_pad_idx, tgt_pad_idx)
+            logits = model(src, tgt, src_pad_idx, tgt_pad_idx, src_offset=src_offset)
         # logits: (B, T_so_far, vocab)
 
         # Greedy: take argmax at the last position

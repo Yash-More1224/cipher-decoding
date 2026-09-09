@@ -1,0 +1,12 @@
+{
+  "config": "C5",
+  "checkpoint": "outputs/checkpoint_C5_epoch29.pt",
+  "n_lines": 500,
+  "char_accuracy": 0.9996004491502656,
+  "seq_accuracy": 0.834,
+  "levenshtein": 0.232,
+  "bleu": 0.9951451484641324,
+  "rouge1": 0.9981945871236196,
+  "rouge2": 0.9971445684155603,
+  "rougeL": 0.9981945871236196
+}

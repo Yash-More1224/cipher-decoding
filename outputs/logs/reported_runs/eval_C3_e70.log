@@ -1,0 +1,12 @@
+[Data] C3 test: 4782 windows spanning 500 lines
+
+
+=== C3: full-line test metrics (n=500) ===
+  char_accuracy  0.2830
+  seq_accuracy   0.0180
+  levenshtein    18.6020
+  bleu           0.7727
+  rouge1         0.9002
+  rouge2         0.8160
+  rougeL         0.9000
+[Eval] Wrote outputs/final_eval_C3.json, a 50-example dump, and outputs/predictions_full_C3.jsonl (500 pairs).

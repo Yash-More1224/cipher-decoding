@@ -3,7 +3,7 @@ blt.py — Byte Latent Transformer (Configuration C5).
 
 Architecture based on:
   Pagnoni et al. (2025) "Byte Latent Transformer: Patches Scale Better Than Tokens"
-  ACL 2025, https://aclanthology.org/2025.acl-long.489
+  ACL 2025, https://aclanthology.org/2025.acl-long.453
 
 Design (simplified for this assignment):
 ─────────────────────────────────────────
@@ -312,7 +312,12 @@ class BLTTransformer(nn.Module):
         # Latent (Global) Transformer — operates on patch sequence
         # Uses ByteLevelTransformerLayer (pre-LN MHA + FFN), same architecture
         # as a standard encoder block. Defined locally to keep blt.py self-contained.
-        self.global_pos_enc = SinusoidalPositionalEncoding(d_model, max_len=8192 // patch_size + 1)
+        # NOTE: patch_offset below is src_offset // patch_size, and src_offset is a
+        # BIT offset (chunk_start * 8), so patch_offset is effectively the character
+        # offset, which reaches 2,670 on the longest line in this corpus. Sizing this
+        # buffer as 8192//patch_size (=1025) silently truncated to an empty slice for
+        # any line beyond 1,025 characters. Sized generously instead.
+        self.global_pos_enc = SinusoidalPositionalEncoding(d_model, max_len=8192)
         self.global_blocks = nn.ModuleList([
             ByteLevelTransformerLayer(d_model, n_heads, d_ff, dropout)
             for _ in range(num_layers)
