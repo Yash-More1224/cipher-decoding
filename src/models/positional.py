@@ -109,14 +109,14 @@ def get_rotary_matrix(
     half = d_k // 2
     theta = 1.0 / (
         10000.0 ** (torch.arange(0, half, device=device, dtype=torch.float) * 2.0 / d_k)
-    )                                           # (half,)
+    )                                           # shape: (half,)
 
     # position × θᵢ  →  (seq_len, half)
     pos    = torch.arange(seq_len, device=device, dtype=torch.float).unsqueeze(1)
     freqs  = pos * theta.unsqueeze(0)           # (seq_len, half)
 
     # Interleave: [θ₀,θ₀,θ₁,θ₁,...] along the d_k axis
-    # torch.repeat_interleave repeats each element: [a,b] → [a,a,b,b]
+    # torch.repeat_interleave repeats each element: [a,b] → [a,a,b,b], so "half" --> "d_k"
     sin = torch.sin(freqs).repeat_interleave(2, dim=-1)   # (seq_len, d_k)
     cos = torch.cos(freqs).repeat_interleave(2, dim=-1)   # (seq_len, d_k)
 
@@ -148,8 +148,9 @@ def apply_rotary_emb(
       rotated_x[odd]  =  x[even]
       output = x * cos + rotated_x * sin
     """
-    # Build the "rotated" counterpart: swap and negate pairs
-    rotated_x = torch.empty_like(x)
+    # Build the "rotated" counterpart (the second term in the rotation formula): swap and negate pairs
+    rotated_x = torch.empty_like(x) # allocates uninitialized memory of the same shape
+  # ... means "all leading dimensions untouched"
     rotated_x[..., 0::2] = -x[..., 1::2]   # -x₂ᵢ₊₁
     rotated_x[..., 1::2] =  x[..., 0::2]   #  x₂ᵢ
 

@@ -66,6 +66,8 @@ class MultiHeadAttention(nn.Module):
         
         # Concatenate heads
         # (batch_size, n_heads, seq_len, d_k) -> (batch_size, seq_len, d_model)
+        # .view() needs the tensor to be contiguous in memory, hence the .contiguous() call,
+        # else the intended concategation won't work correctly.
         x = x.transpose(1, 2).contiguous().view(batch_size, -1, self.d_model)
         
         # Final linear projection

@@ -263,7 +263,7 @@ class LocalDecoder(nn.Module):
         h = self.final_norm(h)
         return self.out_proj(h)   # (B, T, vocab_size)
 
-
+    
 # ---------------------------------------------------------------------------
 # BLT Transformer  (C5)
 # ---------------------------------------------------------------------------
